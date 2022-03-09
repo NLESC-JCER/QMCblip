@@ -6,7 +6,7 @@ from os import path
 
 class CHAMP(FileIOCalculator):
 
-    implemented_properties = ['energy', 'forces']
+    implemented_properties = ['energy', 'forces', 'stress']
 
     name = "CHAMP"
 
@@ -16,6 +16,7 @@ class CHAMP(FileIOCalculator):
         force_file='champ_forces',
         pos_file='molecule.xyz',
         champ_loc='/usr/bin/vmc.mov1',
+        nodefile='',
         ncore=1)
 
     command = ""
@@ -34,7 +35,13 @@ class CHAMP(FileIOCalculator):
         if (not path.exists(self.parameters['vmc_in'])):
             raise CalculatorSetupError("Problem reading CHAMP input.")
 
-        self.command = "mpirun -n " + str(self.parameters['ncore']) + " " \
+        if (self.parameters['nodefile'] == ""):
+            self.command = "mpirun -n " + str(self.parameters['ncore']) + " " \
+                    + self.parameters['champ_loc'] + " -i " + self.parameters['vmc_in'] \
+                    + " > " + self.parameters['vmc_out']
+        else:
+            self.command = "mpirun -s all -n " + str(self.parameters['ncore']) \
+                    + " -machinefile " + self.parameters['nodefile'] + " " \
                     + self.parameters['champ_loc'] + " -i " + self.parameters['vmc_in'] \
                     + " > " + self.parameters['vmc_out']
 
@@ -69,5 +76,5 @@ class CHAMP(FileIOCalculator):
                 f_list = [float(i) for i in line.split(" ") if i.strip()]
                 forces.append(f_list)
 
-            self.results['forces'] = -np.asarray(forces) * Ha/Bohr    
-            print(self.results['forces'])   
+            self.results['forces'] = -np.asarray(forces) * Ha/Bohr   
+        self.results['stress'] = np.zeros((6,)) 
