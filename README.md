@@ -188,3 +188,10 @@ test_otf = ASE_OTF(
 # Run on-the-fly dynamics.
 test_otf.run()
 ```
+
+## Issues
+There are some issues which still need to be ironed out
+1. In the initial phase of the simulation, when the FF is still badly trained, the energy might fluctuate a lot. This is because FLARE still uses the forces and energies of the GP, even when it calls CHAMP to train. So it basically only uses CHAMP for training, and still uses the bad predictions.
+2. FLARE++ sometimes crashes when the number of hyperparameter optimization steps is too big. Cause: unknown
+
+## Results
