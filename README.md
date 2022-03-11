@@ -195,3 +195,10 @@ There are some issues which still need to be ironed out
 2. FLARE++ sometimes crashes when the number of hyperparameter optimization steps is too big. Cause: unknown
 
 ## Results
+In the [examples](Examples) folder I uploaded two examples. One for thiophene at 300K and one for thiophene at 0K but in the excited state geometry. I also included a python script `conv.py` to convert the `thio.out` file to energy plots and a `traj.xyz` which is the trajectory of the atoms over time in xyz format. In the image below you can see the energy over time of the thiophene at 300K. Initially, the energy is badly conserved due to the issue outlined above. But once the ML FF is properly trained the energy is decently conserved. This simulation consisted of 500 timesteps, of which CHAMP was called 71 times.
+
+![energy-300K](Examples/thiophene-300K/energy.png)
+
+However, for the excited state geometry, the results are less favourable. As you can see, the ML FF never gets accurate enough to fully take over. Possibly a longer simulation time is required. This simulation consisted of 500 timesteps, of which CHAMP was called 158 times.
+
+![energy-ex](Examples/thiophene-0K-excited/energy.png)
