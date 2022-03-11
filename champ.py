@@ -18,7 +18,7 @@ class CHAMP(FileIOCalculator):
     default_parameters = dict(
         vmc_in='vmc.inp',
         vmc_out='vmc.out',
-        force_file='champ_forces',
+        force_file='write_forces',
         pos_file='molecule.xyz',
         champ_loc='/usr/bin/vmc.mov1',
         nodefile='',
@@ -34,7 +34,7 @@ class CHAMP(FileIOCalculator):
         Keyword arguments:
         vmc_in -- The input file for CHAMP (default 'vmc.inp')
         vmc_out -- The output file of CHAMP (default 'vmc.out')
-        force_file -- The file that CHAMP writes the forces and energies to (default 'champ_forces')
+        force_file -- The file that CHAMP writes the forces and energies to (default 'write_forces')
         pos_file -- The file from which CHAMP will read to location of the atoms (default 'molecule.xyz')
         champ_loc -- Location of the CHAMP executable (default '/usr/bin/vmc.mov1')
         nodefile -- If set, the calculator will run on multiple nodes for CHAMP

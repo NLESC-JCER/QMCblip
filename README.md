@@ -34,7 +34,7 @@ champ_calc = CHAMP(champ_loc="/home/user/champ/bin/vmc.mov1", force_file="write_
 The CHAMP specific parameters that can be set are:
 - `vmc_in` -- The input file for CHAMP (default 'vmc.inp')
 - `vmc_out` -- The output file of CHAMP (default 'vmc.out')
-- `force_file` -- The file that CHAMP writes the forces and energies to (default 'champ_forces')[^1]
+- `force_file` -- The file that CHAMP writes the forces and energies to (default 'write_forces')[^1]
 - `pos_file` -- The file from which CHAMP will read to location of the atoms (default 'molecule.xyz')[^2]
 - `champ_loc` -- Location of the CHAMP executable (default '/usr/bin/vmc.mov1')
 - `nodefile` -- If set, the calculator will run on multiple nodes for CHAMP
