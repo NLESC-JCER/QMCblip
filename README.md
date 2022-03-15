@@ -202,3 +202,8 @@ In the [examples](Examples) folder I uploaded two examples. One for thiophene at
 However, for the excited state geometry, the results are less favourable. As you can see, the ML FF never gets accurate enough to fully take over. Possibly a longer simulation time is required. This simulation consisted of 500 timesteps, of which CHAMP was called 158 times.
 
 ![energy-ex](Examples/thiophene-0K-excited/energy.png)
+
+## Parameters
+
+- I found that for the excited state geometry it sometimes has difficulty learning the correct energy. I think that setting `max_iterations` lower can help in those cases, although I have not 100% tested this. For the excited geometry a value of about 10 seems to work, while in the ground state geometry 20 also works.
+- Setting `std_tolerance_factor` too strict is definitly not useful. Then FLARE will never take over from CHAMP. I don't think I would recommend setting `std_tolerance_factor` smaller than -0.01 (negative numbers are absolute force thresholds, while positive numbers are ratios with respect to the noise). If you would like to set a ratio with respect to the noise, setting `std_tolerance_factor` to 0.01 also seems to work okay, although there is a lot to test in this regard.
