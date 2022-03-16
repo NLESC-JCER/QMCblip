@@ -72,7 +72,7 @@ class Analyze():
         plt.plot(times, totE - totE[0], label="Total Energy")
         plt.plot(times, potE - potE[0], label="Potential Energy")
         plt.plot(times, kinE - kinE[0], label="Kinetic Energy")
-        plt.scatter([times[index-1] for index in self.dft[1:]], [totE[index-1] - totE[0] for index in self.dft[1:]], marker='x', label="DFT Calculations", color='black')
+        plt.scatter([times[index-1] for index in self.dft[1:]], [totE[index-1] - totE[0] for index in self.dft[1:]], marker='x', label="QMC Calculations", color='black')
         #plt.scatter([times[index-1] for index in self.nondft], [totE[index-1] - totE[0] for index in self.nondft], marker='x', label="FLARE Calculations", color='blue')
         plt.legend()
         plt.xlabel("Time (ps)")
