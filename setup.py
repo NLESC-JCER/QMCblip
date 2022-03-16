@@ -23,8 +23,7 @@ setuptools.setup(
         "Topic :: Scientific/Engineering :: Physics",
         "Operating System :: OS Independent",
     ],
-    package_dir={"": "caf"},
-    packages=setuptools.find_packages(where="caf"),
+    packages=setuptools.find_packages(),
     install_requires=dependencies,
     python_requires=">=3.6",
 )
