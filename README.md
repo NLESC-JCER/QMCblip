@@ -174,7 +174,7 @@ Due to the custom Velocity Verlet scheme, the kinetic energy is one step out of 
 from caf.tools import Analyse
 
 # Import the thio.out file
-data = Analyse('thio.out')
+data = Analyze('thio.out')
 
 # Create the traj.xyz file
 data.to_xyz()
