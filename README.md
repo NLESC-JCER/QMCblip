@@ -69,7 +69,6 @@ from flare_pp.sparse_gp_calculator import SGP_Calculator
 
 # flare imports
 from caf.otf import C_ASE_OTF as ASE_OTF
-from flare import otf_parser
 ```
 Now we will build a molecule and put it in a big box (in this case we will go for thiophene):
 ```
