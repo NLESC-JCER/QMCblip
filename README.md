@@ -168,6 +168,13 @@ test_otf = ASE_OTF(
 # Run on-the-fly dynamics.
 test_otf.run()
 ```
+### Running on CCPGATE
+Because FLARE cannot run on multiple nodes (FLARE++ not even on multiple cores I think), I recommend starting the python script from a node, which then calls other nodes (and itself) to run CHAMP, for example:
+```
+ssh ccp27
+nohup python3 run.py &
+``` 
+
 ## Analysing data
 Due to the custom Velocity Verlet scheme, the kinetic energy is one step out of phase with the potential energy. To make it easier to analyze the data, I included a few tools to do so. These tools also align the potential and kinetic energy:
 ```
