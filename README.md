@@ -171,7 +171,7 @@ test_otf.run()
 ## Analysing data
 Due to the custom Velocity Verlet scheme, the kinetic energy is one step out of phase with the potential energy. To make it easier to analyze the data, I included a few tools to do so. These tools also align the potential and kinetic energy:
 ```
-from caf.tools import Analyse
+from caf.tools import Analyze
 
 # Import the thio.out file
 data = Analyze('thio.out')
