@@ -1,4 +1,4 @@
-# CHAMP-ASE
+# CHAMP-ASE-FLARE
 
 This repository contains a [ASE](https://gitlab.com/ase/ase) calculator for CHAMP. In this README we will go over the process of using this calculator.
 

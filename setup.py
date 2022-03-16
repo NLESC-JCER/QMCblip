@@ -25,5 +25,6 @@ setuptools.setup(
     ],
     package_dir={"": "caf"},
     packages=setuptools.find_packages(where="caf"),
+    install_requires=dependencies,
     python_requires=">=3.6",
 )
