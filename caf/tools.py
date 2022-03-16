@@ -9,6 +9,12 @@ class Analyze():
         self.otf = otf_parser.OtfAnalysis(file, calculate_energy=True)
         self.results = None
 
+    def to_xyz(self, filename=""):
+        if (filename == ""):
+            self.otf.to_xyz('traj.xyz')
+        else:
+            self.otf.to_xyz(filename)
+
     def get_data(self):
         dt = self.otf.header['dt']
 

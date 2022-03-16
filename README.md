@@ -1,34 +1,23 @@
 # CHAMP-ASE-FLARE
 
-This repository contains a [ASE](https://gitlab.com/ase/ase) calculator for CHAMP. In this README we will go over the process of using this calculator.
+This repository contains tools to connect CHAMP to [ASE](https://gitlab.com/ase/ase) and to use it together with a Machine Learning Force Field algorithm called [FLARE](https://github.com/mir-group/flare). In this README we will go over the process of using the CHAMP calculator and how to use FLARE with it.
 
-# Requirements
+# Installation
 
-Simply install the following packages using pip (see [this](https://gitlab.com/ase/ase) for the ASE requirements):
+To install this packages, simply clone it and install it using pip:
 ```
-pip3 install ase numpy
+git clone https://github.com/NLESC-JCER/CHAMP-ASE-FLARE.git
+cd CHAMP-ASE-FLARE
+pip3 install .
 ```
-
 ## Installing CHAMP
 
 To use this software, you need a special version of CHAMP which can export the forces and energy to a file. For this you need to [ase-coupling](https://github.com/filippi-claudia/champ/tree/ase-coupling) branch. Simply clone this and build in the usual way.
 
 ## ASE CHAMP calculator
-
-### Installation
-To install this calculator, simply place it in the same folder as your python script (we will later push it to ASE). To import:
+The CHAMP calculator can used in ASE for any kind of simulation. After importing the calculator, a new CHAMP calculator object can be made using:
 ```
-from champ import CHAMP
-```
-To use this calculator if the python file is located in another folder (recommended), simply use:
-```
-import sys
-sys.path.append('/path/to/folder/')
-from champ import CHAMP
-```
-### Running
-After importing the calculator, a new CHAMP calculator object can be made using:
-```
+from caf.champ import CHAMO
 champ_calc = CHAMP(champ_loc="/home/user/champ/bin/vmc.mov1", force_file="write_forces", ncore=4)
 ```
 The CHAMP specific parameters that can be set are:
@@ -60,18 +49,10 @@ dyn.run(30)
 ```
 
 ## FLARE
-[FLARE](https://github.com/mir-group/flare) is an on-the-fly Force Field Machine Learning packages. It uses Gaussian Process regression to train the Force Field. However, unfortunatly for use it only works for atoms in a box, since it also determines the stress. Without a box, you cannot calculate stress. We circumvent this by placing the molecule in a big box and letting the CHAMP calculator pass a null tensor. The second problem is that it only works up to 3-body interactions. However for MD we idealy want atleast 4-body interactions. This is where [FLARE++](https://github.com/mir-group/flare) comes in. FLARE++ is an extension to FLARE to allow for n-body interactions.
+[FLARE](https://github.com/mir-group/flare) is an on-the-fly Force Field Machine Learning packages. It uses Gaussian Process regression to train the Force Field. However, unfortunatly for use it only works for atoms in a box, since it also determines the stress. Without a box, you cannot calculate stress. We circumvent this by placing the molecule in a big box and letting the CHAMP calculator pass a null tensor. The second problem is that it only works up to 3-body interactions. However for MD we idealy want atleast 4-body interactions. This is where [FLARE++](https://github.com/mir-group/flare) comes in. FLARE++ is an extension to FLARE to allow for n-body interactions. This package contians a modified version of the on-the-fly learning code from FLARE, to make it work well with QMC. To this aim, there is also a modified Velocity Verlet scheme which must be used.
 
 ### Installation
-FLARE wants an older version of numpy. So to install flare, simply:
-```
-pip3 install mir-flare numpy==1.20.3
-```
-Installing FLARE++ on CCPGATE is a little bit more tedious. In my experience I found that the method of building CHAMP (probably by setting the environment variable `LD_LIBRARY_PATH`) can interfere. I would recommend installing FLARE++ before any building of CHAMP in a session:
-```
-pip3 install flare_pp
-```
-If FLARE++ cannot be imported, remove and reinstall FLARE++ after [^3]:
+Installing FLARE++ on CCPGATE is a little bit more tedious. In my experience I found that the method of building CHAMP (probably by setting the environment variable `LD_LIBRARY_PATH`) can interfere. I would recommend installing this package before any building of CHAMP in a session. If FLARE++ cannot be imported, remove and reinstall the packages after [^3]:
 ```
 unset LD_LIBRARY_PATH
 ```
@@ -87,7 +68,7 @@ from flare_pp.sparse_gp import SGP_Wrapper
 from flare_pp.sparse_gp_calculator import SGP_Calculator
 
 # flare imports
-from flare.ase.otf import ASE_OTF
+from caf.otf import C_ASE_OTF as ASE_OTF
 from flare import otf_parser
 ```
 Now we will build a molecule and put it in a big box (in this case we will go for thiophene):
@@ -102,8 +83,8 @@ n_atoms = len(atoms)
 ```
 After this we have to setup the MD and the on-the-fly training. For more details I point you towards the FLARE documentation.
 ```
-# Set MD parameters.
-md_engine = "VelocityVerlet"
+# Set MD parameters. Note: I use the custom Velocity Verlet scheme to be used with CHAMP
+md_engine = "CustomVerlet"
 md_dict = {}
 
 # Create sparse GP model.
@@ -139,7 +120,7 @@ sigma_s = 0.014  # Stress noise (in kcal/A^3, so about 0.1 GPa)
 variance_type = "local"  # Compute uncertainties on local energies (normalized)
 
 # Choose settings for hyperparameter optimization.
-max_iterations = 20  # Max number of BFGS iterations during optimization
+max_iterations = 10  # Max number of BFGS iterations during optimization
 opt_method = "L-BFGS-B"  # Method used for hyperparameter optimization
 
 # Bounds for hyperparameter optimization.
@@ -188,20 +169,37 @@ test_otf = ASE_OTF(
 # Run on-the-fly dynamics.
 test_otf.run()
 ```
+## Analysing data
+Due to the custom Velocity Verlet scheme, the kinetic energy is one step out of phase with the potential energy. To make it easier to analyze the data, I included a few tools to do so. These tools also align the potential and kinetic energy:
+```
+from caf.tools import Analyse
 
+# Import the thio.out file
+data = Analyse('thio.out')
+
+# Create the traj.xyz file
+data.to_xyz()
+
+# Returns a dictionary containing the keys 'times', 'potential energy', 'kinetic energy',
+# 'total energy' and 'temperature'
+results = data.get_data()
+
+# Plot the energy and save it to energy.png
+data.plot_energy(filename="energy.png")
+```
 ## Issues
 There are some issues which still need to be ironed out
-1. In the initial phase of the simulation, when the FF is still badly trained, the energy might fluctuate a lot. This is because FLARE still uses the forces and energies of the GP, even when it calls CHAMP to train. So it basically only uses CHAMP for training, and still uses the bad predictions. I am currently working on an adapted version of FLARE and testing this, but it does not seem to make a huge improvement.
+1. In the initial two steps, the energy is badly conserved. I think this has something to do with how the first step of the verlet is taken.
 2. FLARE++ sometimes crashes when the number of hyperparameter optimization steps is too big. Cause: unknown
 
 ## Results
-In the [examples](Examples) folder I uploaded two examples. One for thiophene at 300K and one for thiophene at 0K but in the excited state geometry. I also included a python script `conv.py` to convert the `thio.out` file to energy plots and a `traj.xyz` which is the trajectory of the atoms over time in xyz format. In the image below you can see the energy over time of the thiophene at 300K. Initially, the energy is badly conserved due to the issue outlined above. But once the ML FF is properly trained the energy is decently conserved. This simulation consisted of 500 timesteps, of which CHAMP was called 71 times.
+In the [examples](examples) folder I uploaded two examples. One for thiophene at 300K and one for thiophene at 300K but in the excited state geometry. I also included a python script `plot.py` to convert the `thio.out` file to energy plots and a `traj.xyz` which is the trajectory of the atoms over time in xyz format. In the image below you can see the energy over time of the thiophene in the ground state geometry. You can see that the energy fluctuates a bit in the beginning because CHAMP is mostly during the work there, but once the ML FF is properly trained the energy stays relatively constant. This simulation consisted of 1000 timesteps, of which CHAMP was called 47 times.
 
-![energy-300K](Examples/thiophene-300K/energy.png)
+![energy-300K](examples/thio-300K/energy.png)
 
-However, for the excited state geometry, the results are less favourable. As you can see, the ML FF never gets accurate enough to fully take over. Possibly a longer simulation time is required. This simulation consisted of 500 timesteps, of which CHAMP was called 158 times.
+However, for the excited state geometry, the results are less favourable. As you can see, the energy fluctuates quite a bit, and the ML FF also never fully takes over. In this case it seems FLARE has difficulty learning the correct energy, as there is a few eV difference between FLARE and CHAMP. This simulation consisted of 1000 timesteps, of which CHAMP was called 134 times.
 
-![energy-ex](Examples/thiophene-0K-excited/energy.png)
+![energy-ex](examples/thio-300K-ex/energy.png)
 
 ## Parameters
 
