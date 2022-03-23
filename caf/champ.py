@@ -43,7 +43,7 @@ class CHAMP(FileIOCalculator):
         champ_loc -- Location of the CHAMP executable (default '/usr/bin/vmc.mov1')
         nodefile -- If set, the calculator will run on multiple nodes for CHAMP
         ncore -- Amount of cores to run CHAMP on (default 1)
-        tags -- Input tags for CHAMP
+        tags -- Input tags for CHAMP (OVERRULES VMC.INP)
         use_opt_wf -- Use the optimized WF from last step (default False)
         """
         
@@ -53,8 +53,9 @@ class CHAMP(FileIOCalculator):
         if (not path.exists(self.parameters['champ_loc'])):
             raise CalculatorSetupError("Did not find champ at: " + self.parameters['champ_loc'])
             
-        if (not path.exists(self.parameters['vmc_in'])):
-            raise CalculatorSetupError("Problem reading CHAMP input.")
+        if (not path.exists(self.parameters['vmc_in']) and self.parameters['tags'] is None):
+            raise CalculatorSetupError("You did no supply any configuration parameters for CHAMP. \
+                                       Either give a .inp file or give a configuration dictionary.")
 
         if self.parameters['tags'] is not None:
             write_input(self.parameters['tags'], filename=self.parameters['vmc_in'])
