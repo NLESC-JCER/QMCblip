@@ -61,10 +61,12 @@ class CHAMP(FileIOCalculator):
         else:
             self.parameters['tags'] = read_input(self.parameters['vmc_in'])
 
+        # If we are using optimized WF files, we use a temporary input file
         if self.parameters['use_opt_wf']:
             self.parameters['vmc_in'] = 'vmc_temp.inp'
             write_input(self.parameters['tags'], self.parameters['vmc_in'])
 
+        # Set the command to call CHAMP
         self._set_command()
     
     def _set_command(self):
@@ -89,14 +91,23 @@ class CHAMP(FileIOCalculator):
         if self.parameters['tags'] is not None:
             write_input(self.parameters['tags'], filename=self.parameters['vmc_in'])
 
+        # Set the command to call CHAMP. May have changed due to the parameters.
         self._set_command()
 
     def configure_qmc(self, update_tags):
+        """
+        Directly change the tags for the vmc.inp. use (-) to divide module and keywords.
+        Example: {"general-pool": "pool"}
+
+        Arguments:
+        update_tags - dictionary of tags to change
+        """
         if type(update_tags) is not dict:
             raise TypeError("You did not supply a dictionary to update the QMC settings!")
 
         tags = self.parameters['tags']
     	
+        # Change the tags supplied by input
         for key, item in update_tags.items():
             key = key.split('-')
             reduce(dict.__getitem__, key[:-1], tags)[key[-1]] = item
@@ -119,6 +130,7 @@ class CHAMP(FileIOCalculator):
                 fileobj.write('%-2s %s %s %s\n' % (s, fmt % (x * Ang/Bohr), \
                                 fmt % (y * Ang/Bohr), fmt % (z * Ang/Bohr)))
 
+        # If we are using optimized WF, set these in the input file
         if self.parameters['use_opt_wf']:
             use_opt_wf(self.parameters['vmc_in'])
 
