@@ -2,9 +2,9 @@ from ase.calculators.calculator import FileIOCalculator, CalculatorSetupError
 from ase.calculators.calculator import InputError
 import numpy as np
 from ase.units import Ang, Bohr, Ha
-from os import path
+from os import path, rename
 from functools import reduce
-from caf.champio import write_input, read_input
+from caf.champio import write_input, read_input, use_opt_wf
 
 class CHAMP(FileIOCalculator):
     """
@@ -25,7 +25,8 @@ class CHAMP(FileIOCalculator):
         champ_loc='/usr/bin/vmc.mov1',
         nodefile=None,
         ncore=1,
-        tags=None)
+        tags=None,
+        use_opt_wf=False)
 
     # Placeholder
     command = ""
@@ -43,6 +44,7 @@ class CHAMP(FileIOCalculator):
         nodefile -- If set, the calculator will run on multiple nodes for CHAMP
         ncore -- Amount of cores to run CHAMP on (default 1)
         tags -- Input tags for CHAMP
+        use_opt_wf -- Use the optimized WF from last step (default False)
         """
         
         FileIOCalculator.__init__(self, restart, ignore_bad_restart_file,
@@ -57,7 +59,11 @@ class CHAMP(FileIOCalculator):
         if self.parameters['tags'] is not None:
             write_input(self.parameters['tags'], filename=self.parameters['vmc_in'])
         else:
-            self.parameters['tags'] = read_input(self.parameters('vmc_in'))
+            self.parameters['tags'] = read_input(self.parameters['vmc_in'])
+
+        if self.parameters['use_opt_wf']:
+            self.parameters['vmc_in'] = 'vmc_temp.inp'
+            write_input(self.parameters['tags'], self.parameters['vmc_in'])
 
         self._set_command()
     
@@ -112,6 +118,11 @@ class CHAMP(FileIOCalculator):
             for s, (x, y, z) in zip(atoms.symbols, atoms.positions):
                 fileobj.write('%-2s %s %s %s\n' % (s, fmt % (x * Ang/Bohr), \
                                 fmt % (y * Ang/Bohr), fmt % (z * Ang/Bohr)))
+
+        if self.parameters['use_opt_wf']:
+            use_opt_wf(self.parameters['vmc_in'])
+
+
 
     def read(self, label):
         raise NotImplementedError

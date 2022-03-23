@@ -1,5 +1,5 @@
 from os.path import exists
-from os import remove
+from os import remove, rename
 from glob import glob
 
 wf = ["determinants", "orbitals", "jastrow", "jastrow_der", "molecule", "basis_num_info", "symmetry"]
@@ -85,8 +85,8 @@ def read_input(filename="vmc.inp"):
 
 def cleanup(*args):
     standard = ["force_analytic", "restart_vmc", "output.log", "parser.log", "orbitals_optimal.1.*",
-                "jastrow_optimal.1.*", "det_optimal.1.*", "geo_optimal.1.*", "geo_optimal_final",
-                "mc_configs_start", "nohup.out"]
+                "jastrow_optimal.1.*", "det_optimal.1.*", "geo_optimal.*", "geo_optimal_final",
+                "mc_configs_start", "nohup.out", "vmc_temp.inp"]
     for item in args:
         if item in standard:
             standard.remove(item)
@@ -101,7 +101,7 @@ def cleanup(*args):
             if exists(file):
                 remove(file)
 
-def use_opt_wf(filename="vmc.inp")
+def use_opt_wf(filename="vmc.inp"):
     opt = ["det_optimal.1.iter*", "orbitals_optimal.1.iter*", "jastrow_optimal.1.iter*"]
     keys = ["determinants", "orbitals", "jastrow"]
 
@@ -109,8 +109,8 @@ def use_opt_wf(filename="vmc.inp")
 
     for ind, name in enumerate(opt):
         num = len(glob(name))
-        opt[ind] = opt[ind].strip('*') + str(num)
-        tags[keys[ind]] = opt[ind]
+        if num > 0:
+            opt[ind] = opt[ind].strip('*') + str(num)
+            tags[keys[ind]] = opt[ind]
 
     write_input(tags, filename)
-    
