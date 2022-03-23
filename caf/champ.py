@@ -3,6 +3,8 @@ from ase.calculators.calculator import InputError
 import numpy as np
 from ase.units import Ang, Bohr, Ha
 from os import path
+from functools import reduce
+from caf.champio import write_input, read_input
 
 class CHAMP(FileIOCalculator):
     """
@@ -21,8 +23,9 @@ class CHAMP(FileIOCalculator):
         force_file='write_forces',
         pos_file='molecule.xyz',
         champ_loc='/usr/bin/vmc.mov1',
-        nodefile='',
-        ncore=1)
+        nodefile=None,
+        ncore=1,
+        tags=None)
 
     # Placeholder
     command = ""
@@ -39,6 +42,7 @@ class CHAMP(FileIOCalculator):
         champ_loc -- Location of the CHAMP executable (default '/usr/bin/vmc.mov1')
         nodefile -- If set, the calculator will run on multiple nodes for CHAMP
         ncore -- Amount of cores to run CHAMP on (default 1)
+        tags -- Input tags for CHAMP
         """
         
         FileIOCalculator.__init__(self, restart, ignore_bad_restart_file,
@@ -50,8 +54,16 @@ class CHAMP(FileIOCalculator):
         if (not path.exists(self.parameters['vmc_in'])):
             raise CalculatorSetupError("Problem reading CHAMP input.")
 
+        if self.parameters['tags'] is not None:
+            write_input(self.parameters['tags'], filename=self.parameters['vmc_in'])
+        else:
+            self.parameters['tags'] = read_input(self.parameters('vmc_in'))
+
+        self._set_command()
+    
+    def _set_command(self):
         # Add nodefile or not
-        if (self.parameters['nodefile'] == ""):
+        if (self.parameters['nodefile'] is None):
             self.command = "mpirun -n " + str(self.parameters['ncore']) + " " \
                     + self.parameters['champ_loc'] + " -i " + self.parameters['vmc_in'] \
                     + " -o " + self.parameters['vmc_out']
@@ -60,6 +72,30 @@ class CHAMP(FileIOCalculator):
                     + " -machinefile " + self.parameters['nodefile'] + " " \
                     + self.parameters['champ_loc'] + " -i " + self.parameters['vmc_in'] \
                     + " -o " + self.parameters['vmc_out']
+
+    def configure(self, **kwargs):
+        """
+        (Re)configure the CHAMP calculator by setting the keyword arguments.
+        The tags for the vmc.inp can also be set here.
+        """
+        self.set(**kwargs)
+
+        if self.parameters['tags'] is not None:
+            write_input(self.parameters['tags'], filename=self.parameters['vmc_in'])
+
+        self._set_command()
+
+    def configure_qmc(self, update_tags):
+        if type(update_tags) is not dict:
+            raise TypeError("You did not supply a dictionary to update the QMC settings!")
+
+        tags = self.parameters['tags']
+    	
+        for key, item in update_tags.items():
+            key = key.split('-')
+            reduce(dict.__getitem__, key[:-1], tags)[key[-1]] = item
+
+        self.parameters['tags'] = tags
 
 
     def write_input(self, atoms, properties=None, system_changes=None):
