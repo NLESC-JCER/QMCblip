@@ -2,12 +2,11 @@ from os.path import exists
 from os import remove, rename
 from glob import glob
 from pydantic import BaseModel, Field, DirectoryPath, FilePath
-from typing import Optional
+from typing import Optional, Type, Union
 from pathlib import PosixPath, Path
 
-wf = ["determinants", "orbitals", "jastrow", "jastrow_der", "molecule", "basis_num_info", "symmetry"]
 
-class settings(BaseModel):
+class Settings(BaseModel):
     class General(BaseModel):
         title: str
         pool: DirectoryPath = PosixPath('./pool/')
@@ -45,128 +44,120 @@ class settings(BaseModel):
         vmc_nconf_new: int = 0
 
     general: General
-    molecule: Path
-    basis_num_info: FilePath
-    determinants: FilePath
-    orbitals: FilePath
-    jastrow: FilePath
-    jastrow_der: FilePath
-    symmetry: Optional[FilePath]
+    molecule: Path = Field(prefix="load ")
+    basis_num_info: FilePath = Field(prefix="load ")
+    determinants: FilePath = Field(prefix="load ")
+    orbitals: FilePath = Field(prefix="load ")
+    jastrow: FilePath = Field(prefix="load ")
+    jastrow_der: FilePath = Field(prefix="load ")
+    symmetry: Optional[FilePath] = Field(prefix="load ")
     ase: Optional[Ase]
     electrons: Electrons
     optwf: Optional[Optwf]
     blocking_vmc: Optional[BlockingVmc]
 
-def check_tags(tags):
-    """
-    Check if a dictionary will satisfy basic neccessities for CHAMP input file.
-    This does not check everything.
+    def write(self, filename='vmc.inp'):
+        """
+        Write a this dataclass containing the CHAMP configuration to an input file.
 
-    Arguments:
-    tags -- dictionary containing CHAMP input
-    """
-    # Check if the argument is a dict
-    if (type(tags) is not dict):
-        raise TypeError("The input is not a dictionary!")
-
-    # Check if the general module is present
-    if ("general" not in tags) or (type(tags['general']) is not dict):
-        raise ValueError("Make sure your input contains the 'general' module!")
-
-    # Check if the wavefunction and basis files are present
-    for item in wf:
-        if (item not in tags) and (item != "symmetry"):
-            raise ValueError("Input does not contain " + item + "!")
-        if (not exists(tags[item])) and (item != "molecule"):
-            raise FileNotFoundError(tags[item] + " was not found!")
-
-
-def write_input(tags, filename="vmc.inp"):
-    """
-    Write a dictionary containing the CHAMP configuration to an input file.
-
-    Arguments:
-    tags -- dictionary containing CHAMP input. Should satisfy check_tags() function
-    filename -- input file to write to
-    """
-    # Check the validity of the input
-    check_tags(tags)
-
-    f = open(filename, 'w')
-
-    for key, value in tags.items():
-        # Writing a module
-        if (type(value) is dict):
-            f.write("\n%module " + key + "\n")
-            for key2, value2 in value.items():
-                f.write("\t" + key2 + " " + str(value2) + "\n")
-            f.write("%endmodule\n\n")
-        # Loading in a file
-        elif (key in wf):
-            f.write("load " + key + " " + str(value) + "\n")
-        else:
-            f.write(key + " " + str(value) + "\n")
-
-    f.close()
-
-def read_input(filename="vmc.inp"):
-    """
-    Read the CHAMP input file and convert it to a dictionary format
-
-    Arguments:
-    filename -- file of the input file to read and write to
-
-    Output:
-    Dictionary containing the CHAMP configuration
-    """
-    # Check if the file exists
-    if not exists(filename):
-        raise FileNotFoundError(filename + " was not found!")
-
-    output = dict()
-
-    f = open(filename, 'r')
-
-    # Set some variables to keep track of modules
-    curmod = ""
-    inmod = False
-
-    for line in f:
-        # We skip empty lines
-        if not line.strip():
-            continue
-        # Beginning of a module
-        elif line.startswith("%module"):
-            curmod = line.removeprefix("%module ").removesuffix('\n')
-            inmod = True
-            output[curmod] = dict()
-        # End of a module
-        elif line.startswith("%endmodule"):
-            inmod = False
-        # Loading in a file
-        elif line.startswith("load"):
-            temp = line.removeprefix("load ").removesuffix('\n')
-            temp = temp.split()
-            key = temp[0]
-            temp.pop(0)
-            value = ' '.join(temp)
-            output[key] = value
-        # All other tags
-        else:
-            temp = line.removesuffix('\n').split()
-            key = temp[0]
-            temp.pop(0)
-            value = ' '.join(temp)
-            if inmod:
-                # If we are in a module, add the tag to that subdictionary.
-                output[curmod][key] = value
+        Arguments:
+        filename -- input file to write to
+        """
+        f = open(filename, 'w')
+        
+        schema = self.schema()['properties']
+        for ind, item in enumerate(self):
+            if isinstance(item[1], BaseModel):
+                f.write("\n%module " + item[0] + "\n")
+                for ind2, item2 in enumerate(item[1]):
+                    f.write("\t" + item2[0] + " " + str(item2[1]) + "\n")
+                f.write("%endmodule\n\n")
             else:
+                if 'prefix' in schema[item[0]]:
+                    f.write(schema[item[0]]['prefix'] + item[0] + " " + str(item[1]) + '\n')
+                else:
+                    f.write(item[0] + " " + str(item[1]) + '\n')
+
+        f.close()
+
+    @classmethod
+    def read(cls: Type['Model'], filename: Union[str, Path]) -> 'Model':
+        """
+        Read the CHAMP input file and convert it to a dictionary format
+
+        Arguments:
+        filename -- file of the input file to read and write to
+
+        Output:
+        Dictionary containing the CHAMP configuration
+        """
+        # Check if the file exists
+        if not exists(filename):
+            raise FileNotFoundError(filename + " was not found!")
+
+        output = dict()
+
+        f = open(filename, 'r')
+
+        # Set some variables to keep track of modules
+        curmod = ""
+        inmod = False
+
+        for line in f:
+            # We skip empty lines
+            if not line.strip():
+                continue
+            # Beginning of a module
+            elif line.startswith("%module"):
+                curmod = line.removeprefix("%module ").removesuffix('\n')
+                inmod = True
+                output[curmod] = dict()
+            # End of a module
+            elif line.startswith("%endmodule"):
+                inmod = False
+            # Loading in a file
+            elif line.startswith("load"):
+                temp = line.removeprefix("load ").removesuffix('\n')
+                temp = temp.split()
+                key = temp[0]
+                temp.pop(0)
+                value = ' '.join(temp)
                 output[key] = value
+            # All other tags
+            else:
+                temp = line.removesuffix('\n').split()
+                key = temp[0]
+                temp.pop(0)
+                value = ' '.join(temp)
+                if inmod:
+                    # If we are in a module, add the tag to that subdictionary.
+                    output[curmod][key] = value
+                else:
+                    output[key] = value
 
-    f.close()
+        f.close()
 
-    # Return the dictionary
-    return output
+        return cls(**output)
+
+   
+    def use_opt_wf(self, filename="vmc.inp"):
+        """
+        Function to replace the orbitals, determinants and jastrow with the optimized files.
+
+        Arguments:
+        filename -- file of the input file to  write to
+        """
+        opt = ["det_optimal.1.iter*", "orbitals_optimal.1.iter*", "jastrow_optimal.1.iter*"]
+        keys = ["determinants", "orbitals", "jastrow"]
+
+        for ind, name in enumerate(opt):
+            num = len(glob(name))
+            # If there are no optimized WF files, we do not use them
+            if num > 0:
+                opt[ind] = opt[ind].strip('*') + str(num)
+                setattr(self, keys[ind], opt[ind])
+
+        self.write(filename)
 
 def cleanup(*args):
     """
@@ -194,23 +185,3 @@ def cleanup(*args):
             if exists(file):
                 remove(file)
 
-def use_opt_wf(filename="vmc.inp"):
-    """
-    Function to replace the orbitals, determinants and jastrow with the optimized files.
-
-    Arguments:
-    filename -- file of the input file to read and write to
-    """
-    opt = ["det_optimal.1.iter*", "orbitals_optimal.1.iter*", "jastrow_optimal.1.iter*"]
-    keys = ["determinants", "orbitals", "jastrow"]
-
-    tags = read_input(filename)
-
-    for ind, name in enumerate(opt):
-        num = len(glob(name))
-        # If there are no optimized WF files, we do not use them
-        if num > 0:
-            opt[ind] = opt[ind].strip('*') + str(num)
-            tags[keys[ind]] = opt[ind]
-
-    write_input(tags, filename)
