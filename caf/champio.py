@@ -1,8 +1,61 @@
 from os.path import exists
 from os import remove, rename
 from glob import glob
+from pydantic import BaseModel, Field, DirectoryPath, FilePath
+from typing import Optional
+from pathlib import PosixPath, Path
 
 wf = ["determinants", "orbitals", "jastrow", "jastrow_der", "molecule", "basis_num_info", "symmetry"]
+
+class settings(BaseModel):
+    class General(BaseModel):
+        title: str
+        pool: DirectoryPath = PosixPath('./pool/')
+        basis: str
+        pseudopot: Optional[str]
+        mode: str = 'vmc_one_mpi1'
+        nloc: Optional[int]
+        nquad: Optional[int]
+
+    class Ase(BaseModel):
+        iase: int = 1
+        iforce_analy: int = 0
+        node_cutoff: float = 1
+        enode_cutoff: float = 0.05
+
+    class Electrons(BaseModel):
+        nup: int
+        nelec: int
+
+    class Optwf(BaseModel):
+        ioptwf: int = 1
+        ioptci: int = 1
+        ioptjas: int = 1
+        ioptorb: int = 1
+        nextorb: int = 100
+        no_active: int = 1
+        nopt_iter: int = 1
+        isample_cmat: int = 0
+        energy_tol: float = 0.0
+
+    class BlockingVmc(BaseModel):
+        vmc_nstep: int = 20
+        vmc_nblk: int = 400
+        vmc_nblkeq: int = 1
+        vmc_nconf_new: int = 0
+
+    general: General
+    molecule: Path
+    basis_num_info: FilePath
+    determinants: FilePath
+    orbitals: FilePath
+    jastrow: FilePath
+    jastrow_der: FilePath
+    symmetry: Optional[FilePath]
+    ase: Optional[Ase]
+    electrons: Electrons
+    optwf: Optional[Optwf]
+    blocking_vmc: Optional[BlockingVmc]
 
 def check_tags(tags):
     """
