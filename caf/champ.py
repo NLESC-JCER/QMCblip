@@ -6,6 +6,7 @@ from os import path, rename
 from functools import reduce
 from caf.champio import Settings
 
+
 class CHAMP(FileIOCalculator):
     """
     An ASE calculator for the Quantum Monte Carlo software CHAMP
@@ -115,7 +116,7 @@ class CHAMP(FileIOCalculator):
 
         # If we are using optimized WF, set these in the input file
         if self.parameters['use_opt_wf']:
-            use_opt_wf(self.parameters['vmc_in'])
+            self.parameters['settings'].use_opt_wf(self.parameters['vmc_in'])
 
 
 

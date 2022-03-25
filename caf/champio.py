@@ -9,7 +9,7 @@ from pathlib import PosixPath, Path
 class Settings(BaseModel):
     class General(BaseModel):
         title: str
-        pool: DirectoryPath = PosixPath('./pool/')
+        pool: DirectoryPath = Field(PosixPath('./pool/'), postfix="/")
         basis: str
         pseudopot: Optional[str]
         mode: str = 'vmc_one_mpi1'
@@ -19,7 +19,7 @@ class Settings(BaseModel):
     class Ase(BaseModel):
         iase: int = 1
         iforce_analy: int = 0
-        node_cutoff: float = 1
+        node_cutoff: int = 1
         enode_cutoff: float = 0.05
 
     class Electrons(BaseModel):
@@ -68,9 +68,13 @@ class Settings(BaseModel):
         schema = self.schema()['properties']
         for ind, item in enumerate(self):
             if isinstance(item[1], BaseModel):
+                schema2 = item[1].schema()['properties']
                 f.write("\n%module " + item[0] + "\n")
                 for ind2, item2 in enumerate(item[1]):
-                    f.write("\t" + item2[0] + " " + str(item2[1]) + "\n")
+                    if 'postfix' in schema2[item2[0]]:
+                        f.write("\t" + item2[0] + " " + str(item2[1]) + schema2[item2[0]]['postfix'] + "\n")
+                    else:
+                        f.write("\t" + item2[0] + " " + str(item2[1]) + "\n")
                 f.write("%endmodule\n\n")
             else:
                 if 'prefix' in schema[item[0]]:
@@ -89,7 +93,7 @@ class Settings(BaseModel):
         filename -- file of the input file to read and write to
 
         Output:
-        Dictionary containing the CHAMP configuration
+        Settings object containing the CHAMP configuration
         """
         # Check if the file exists
         if not exists(filename):
