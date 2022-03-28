@@ -4,7 +4,8 @@ import numpy as np
 from ase.units import Ang, Bohr, Ha
 from os import path, rename
 from functools import reduce
-from caf.champio import write_input, read_input, use_opt_wf
+from caf.champio import Settings
+
 
 class CHAMP(FileIOCalculator):
     """
@@ -25,7 +26,7 @@ class CHAMP(FileIOCalculator):
         champ_loc='/usr/bin/vmc.mov1',
         nodefile=None,
         ncore=1,
-        tags=None,
+        settings=None,
         use_opt_wf=False)
 
     # Placeholder
@@ -43,7 +44,7 @@ class CHAMP(FileIOCalculator):
         champ_loc -- Location of the CHAMP executable (default '/usr/bin/vmc.mov1')
         nodefile -- If set, the calculator will run on multiple nodes for CHAMP
         ncore -- Amount of cores to run CHAMP on (default 1)
-        tags -- Input tags for CHAMP (OVERRULES VMC.INP)
+        settings -- Input settings for CHAMP (OVERRULES VMC.INP)
         use_opt_wf -- Use the optimized WF from last step (default False)
         """
         
@@ -53,19 +54,22 @@ class CHAMP(FileIOCalculator):
         if (not path.exists(self.parameters['champ_loc'])):
             raise CalculatorSetupError("Did not find champ at: " + self.parameters['champ_loc'])
             
-        if (not path.exists(self.parameters['vmc_in']) and self.parameters['tags'] is None):
+        if (not path.exists(self.parameters['vmc_in']) and self.parameters['settings'] is None):
             raise CalculatorSetupError("You did no supply any configuration parameters for CHAMP. \
                                        Either give a .inp file or give a configuration dictionary.")
+        
+        if not isinstance(self.parameters['settings'], Settings) and self.parameters['settings'] is not None:
+            raise CalculatorSetupError('You did not provide a proper settings object.')
 
-        if self.parameters['tags'] is not None:
-            write_input(self.parameters['tags'], filename=self.parameters['vmc_in'])
+        if self.parameters['settings'] is not None:
+           self.parameters['settings'].write(filename=self.parameters['vmc_in'])
         else:
-            self.parameters['tags'] = read_input(self.parameters['vmc_in'])
+            self.parameters['settings'] = Settings.read(self.parameters['vmc_in'])
 
         # If we are using optimized WF files, we use a temporary input file
         if self.parameters['use_opt_wf']:
             self.parameters['vmc_in'] = 'vmc_temp.inp'
-            write_input(self.parameters['tags'], self.parameters['vmc_in'])
+            self.parameters['settings'].write(self.parameters['vmc_in'])
 
         # Set the command to call CHAMP
         self._set_command()
@@ -89,32 +93,11 @@ class CHAMP(FileIOCalculator):
         """
         self.set(**kwargs)
 
-        if self.parameters['tags'] is not None:
-            write_input(self.parameters['tags'], filename=self.parameters['vmc_in'])
+        if self.parameters['settings'] is not None:
+            self.parameters['settings'].write(self.parameters['vmc_in'])
 
         # Set the command to call CHAMP. May have changed due to the parameters.
         self._set_command()
-
-    def configure_qmc(self, update_tags):
-        """
-        Directly change the tags for the vmc.inp. use (-) to divide module and keywords.
-        Example: {"general-pool": "pool"}
-
-        Arguments:
-        update_tags - dictionary of tags to change
-        """
-        if type(update_tags) is not dict:
-            raise TypeError("You did not supply a dictionary to update the QMC settings!")
-
-        tags = self.parameters['tags']
-    	
-        # Change the tags supplied by input
-        for key, item in update_tags.items():
-            key = key.split('-')
-            reduce(dict.__getitem__, key[:-1], tags)[key[-1]] = item
-
-        self.parameters['tags'] = tags
-
 
     def write_input(self, atoms, properties=None, system_changes=None):
         FileIOCalculator.write_input(self, atoms, properties, system_changes)
@@ -133,7 +116,7 @@ class CHAMP(FileIOCalculator):
 
         # If we are using optimized WF, set these in the input file
         if self.parameters['use_opt_wf']:
-            use_opt_wf(self.parameters['vmc_in'])
+            self.parameters['settings'].use_opt_wf(self.parameters['vmc_in'])
 
 
 
