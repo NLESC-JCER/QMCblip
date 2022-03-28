@@ -13,8 +13,8 @@ class Settings(BaseModel):
         basis: str
         pseudopot: Optional[str]
         mode: str = 'vmc_one_mpi1'
-        nloc: Optional[int]
-        nquad: Optional[int]
+        seed: int = 1837465927472523
+        eunit: str = "Hartrees"
 
     class Ase(BaseModel):
         iase: int = 1
@@ -43,6 +43,10 @@ class Settings(BaseModel):
         vmc_nblkeq: int = 1
         vmc_nconf_new: int = 0
 
+    class Pseudo(BaseModel):
+        nloc: int = 4
+        nquad: int = 6
+
     general: General
     molecule: Path = Field(prefix="load ")
     basis_num_info: FilePath = Field(prefix="load ")
@@ -54,6 +58,7 @@ class Settings(BaseModel):
     ase: Optional[Ase]
     electrons: Electrons
     optwf: Optional[Optwf]
+    pseudo: Optional[Pseudo]
     blocking_vmc: Optional[BlockingVmc]
 
     def write(self, filename='vmc.inp'):
