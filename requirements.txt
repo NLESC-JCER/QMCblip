@@ -3,3 +3,4 @@ mir-flare==0.2.4
 flare-pp==0.1.1
 numpy
 matplotlib
+pydantic
