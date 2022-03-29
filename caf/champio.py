@@ -118,7 +118,7 @@ class Settings(BaseModel):
                 continue
             # Beginning of a module
             elif line.startswith("%module"):
-                curmod = line.removeprefix("%module ").removesuffix('\n')
+                curmod = line[8:-1]
                 inmod = True
                 output[curmod] = dict()
             # End of a module
@@ -126,7 +126,7 @@ class Settings(BaseModel):
                 inmod = False
             # Loading in a file
             elif line.startswith("load"):
-                temp = line.removeprefix("load ").removesuffix('\n')
+                temp = line[5:-1]
                 temp = temp.split()
                 key = temp[0]
                 temp.pop(0)
@@ -134,7 +134,7 @@ class Settings(BaseModel):
                 output[key] = value
             # All other tags
             else:
-                temp = line.removesuffix('\n').split()
+                temp = line[:-1].split()
                 key = temp[0]
                 temp.pop(0)
                 value = ' '.join(temp)
