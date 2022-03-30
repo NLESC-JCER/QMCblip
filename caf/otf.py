@@ -164,9 +164,10 @@ class C_ASE_OTF(ASE_OTF, C_OTF):
         dft_calc,
         md_engine,
         md_kwargs,
+        update_settings,
         calculator=None,
         trajectory=None,
-        **otf_kwargs,
+        **otf_kwargs
     ):
 
         self.structure = FLARE_Atoms.from_ase_atoms(atoms)
@@ -176,6 +177,7 @@ class C_ASE_OTF(ASE_OTF, C_OTF):
         self.md_engine = md_engine
         self.md_kwargs = md_kwargs
         self._kernels = None
+        self.update_settings = np.array(update_settings)
 
         if md_engine == "CustomVerlet":
             MD = CustomVerlet
@@ -222,6 +224,18 @@ class C_ASE_OTF(ASE_OTF, C_OTF):
         Get new position in molecular dynamics based on the forces predicted by
         FLARE_Calculator or DFT calculator
         """
+
+        if self.curr_step in self.update_settings:
+            sets = self.dft_loc.parameters.settings
+            ind = np.where(self.update_settings == self.curr_step)[0][0]
+            changes = self.update_settings[ind][1]
+            for key, val in changes.items():
+                if isinstance(val, dict):
+                    for key2, val2 in val.items():
+                        setattr(getattr(sets, key), key2, val2)
+                else:
+                    setattr(sets, key, val)
+
         # Update previous positions.
         self.structure.prev_positions = np.copy(self.structure.positions)
 

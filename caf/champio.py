@@ -163,7 +163,7 @@ class Settings(BaseModel):
             num = len(glob(name))
             # If there are no optimized WF files, we do not use them
             index = min(num, self.optwf.nopt_iter)
-            if num >= index:
+            if num >= index and index > 0:
                 opt[ind] = opt[ind].strip('*') + str(index)
                 setattr(self, keys[ind], opt[ind])
 
