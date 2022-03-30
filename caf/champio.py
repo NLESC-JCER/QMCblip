@@ -162,8 +162,9 @@ class Settings(BaseModel):
         for ind, name in enumerate(opt):
             num = len(glob(name))
             # If there are no optimized WF files, we do not use them
-            if num > 0:
-                opt[ind] = opt[ind].strip('*') + str(num)
+            index = min(num, self.optwf.iopt_iter)
+            if num >= index:
+                opt[ind] = opt[ind].strip('*') + str(index)
                 setattr(self, keys[ind], opt[ind])
 
         self.write(filename)

@@ -21,6 +21,7 @@ setuptools.setup(
     classifiers=[
         "Programming Language :: Python :: 3",
         "Topic :: Scientific/Engineering :: Physics",
+        "Topic :: Scientific/Engineering :: Chemistry",
         "Operating System :: OS Independent",
     ],
     packages=setuptools.find_packages(),
