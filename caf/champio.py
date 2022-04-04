@@ -149,7 +149,7 @@ class Settings(BaseModel):
         return cls(**output)
 
    
-    def use_opt_wf(self, filename="vmc.inp"):
+    def use_opt_wf(self):
         """
         Function to replace the orbitals, determinants and jastrow with the optimized files.
 
@@ -166,8 +166,6 @@ class Settings(BaseModel):
             if num >= index and index > 0:
                 opt[ind] = opt[ind].strip('*') + str(index)
                 setattr(self, keys[ind], opt[ind])
-
-        self.write(filename)
 
     def todict(self):
         return self.json(exclude_none=True)

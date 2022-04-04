@@ -109,6 +109,9 @@ class CHAMP(FileIOCalculator):
                 fileobj.write('%-2s %s %s %s\n' % (s, fmt % (x * Ang/Bohr), \
                                 fmt % (y * Ang/Bohr), fmt % (z * Ang/Bohr)))
 
+        if self.parameters['use_opt_wf']:
+            self.parameters['settings'].use_opt_wf()
+
         # Rewrite the input file
         self.parameters['settings'].write('vmc_temp.inp')
 
