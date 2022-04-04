@@ -170,7 +170,6 @@ class Settings(BaseModel):
         self.write(filename)
 
     def todict(self):
-        print(self.json(exclude_none=True))
         return self.json(exclude_none=True)
 
 def cleanup(*args):

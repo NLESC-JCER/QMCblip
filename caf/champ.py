@@ -66,10 +66,8 @@ class CHAMP(FileIOCalculator):
         else:
             self.parameters['settings'] = Settings.read(self.parameters['vmc_in'])
 
-        # If we are using optimized WF files, we use a temporary input file
-        if self.parameters['use_opt_wf']:
-            self.parameters['vmc_in'] = 'vmc_temp.inp'
-            self.parameters['settings'].write(self.parameters['vmc_in'])
+        # We use a temporary input file
+        self.parameters['settings'].write('vmc_temp.inp')
 
         # Set the command to call CHAMP
         self._set_command()
@@ -78,12 +76,12 @@ class CHAMP(FileIOCalculator):
         # Add nodefile or not
         if (self.parameters['nodefile'] is None):
             self.command = "mpirun -n " + str(self.parameters['ncore']) + " " \
-                    + self.parameters['champ_loc'] + " -i " + self.parameters['vmc_in'] \
+                    + self.parameters['champ_loc'] + " -i vmc_temp.inp" \
                     + " -o " + self.parameters['vmc_out']
         else:
             self.command = "mpirun -s all -n " + str(self.parameters['ncore']) \
                     + " -machinefile " + self.parameters['nodefile'] + " " \
-                    + self.parameters['champ_loc'] + " -i " + self.parameters['vmc_in'] \
+                    + self.parameters['champ_loc'] + " -i vmc_temp.inp" \
                     + " -o " + self.parameters['vmc_out']
 
     def configure(self, **kwargs):
@@ -92,9 +90,6 @@ class CHAMP(FileIOCalculator):
         The tags for the vmc.inp can also be set here.
         """
         self.set(**kwargs)
-
-        if self.parameters['settings'] is not None:
-            self.parameters['settings'].write(self.parameters['vmc_in'])
 
         # Set the command to call CHAMP. May have changed due to the parameters.
         self._set_command()
@@ -114,9 +109,8 @@ class CHAMP(FileIOCalculator):
                 fileobj.write('%-2s %s %s %s\n' % (s, fmt % (x * Ang/Bohr), \
                                 fmt % (y * Ang/Bohr), fmt % (z * Ang/Bohr)))
 
-        # If we are using optimized WF, set these in the input file
-        if self.parameters['use_opt_wf']:
-            self.parameters['settings'].use_opt_wf(self.parameters['vmc_in'])
+        # Rewrite the input file
+        self.parameters['settings'].write('vmc_temp.inp')
 
 
 
