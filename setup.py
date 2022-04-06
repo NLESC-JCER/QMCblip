@@ -18,10 +18,12 @@ setuptools.setup(
     project_urls={
         "Bug Tracker": "https://github.com/NLESC-JCER/QMCblip/issues",
     },
+    license="Apache Software License 2.0",
     classifiers=[
         "Programming Language :: Python :: 3",
         "Topic :: Scientific/Engineering :: Physics",
         "Topic :: Scientific/Engineering :: Chemistry",
+        "License :: OSI Approved :: Apache Software License",
         "Operating System :: OS Independent",
     ],
     packages=setuptools.find_packages(),
