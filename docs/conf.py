@@ -57,7 +57,7 @@ html_static_path = ['_static']
 autodoc_moc_imports = [
     'numpy',
     'mir-flare',
-    'flare_pp',
+    'flare-pp',
     'ase',
     'matplotlib',
     'pydantic'
