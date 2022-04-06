@@ -4,7 +4,7 @@ import numpy as np
 from ase.units import Ang, Bohr, Ha
 from os import path, rename
 from functools import reduce
-from caf.champio import Settings
+from qmcblip.champio import Settings
 
 
 class CHAMP(FileIOCalculator):

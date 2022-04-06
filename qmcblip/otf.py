@@ -32,7 +32,7 @@ from flare.utils.learner import is_std_in_bound
 
 from ase import units
 
-from caf.verlet import CustomVerlet
+from qmcblip.verlet import CustomVerlet
 
 
 class C_OTF(OTF):

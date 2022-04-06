@@ -1,4 +1,4 @@
-# CHAMP-ASE-FLARE
+# QMC Based Learning of Interatomic Potentials
 
 This repository contains tools to connect CHAMP to [ASE](https://gitlab.com/ase/ase) and to use it together with a Machine Learning Force Field algorithm called [FLARE](https://github.com/mir-group/flare). In this README we will go over the process of using the CHAMP calculator and how to use FLARE with it.
 
@@ -6,8 +6,8 @@ This repository contains tools to connect CHAMP to [ASE](https://gitlab.com/ase/
 
 To install this packages, simply clone it and install it using pip:
 ```
-git clone https://github.com/NLESC-JCER/CHAMP-ASE-FLARE.git
-cd CHAMP-ASE-FLARE
+git clone https://github.com/NLESC-JCER/QMCblip.git
+cd QMCblip
 pip3 install .
 ```
 ## Installing CHAMP
