@@ -27,6 +27,15 @@ release = '1.0.0'
 
 # -- General configuration ---------------------------------------------------
 
+autodoc_moc_imports = [
+    'numpy',
+    'mir-flare',
+    'flare-pp',
+    'ase',
+    'matplotlib',
+    'pydantic'
+]
+
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
@@ -54,11 +63,3 @@ html_theme = 'alabaster'
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
 
-autodoc_moc_imports = [
-    'numpy',
-    'mir-flare',
-    'flare-pp',
-    'ase',
-    'matplotlib',
-    'pydantic'
-]
