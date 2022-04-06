@@ -1,7 +1,21 @@
+*.py[cod]
 *.egg-info
 *.eggs
+*.pkl
+.ipynb_checkpoints
+*.code-workspace
+*.t21
+*.hdf5
 
-__pycache__/
 build
 dist
 .cache
+__pycache__
+
+htmlcov
+.coverage
+coverage.xml
+.pytest_cache
+
+docs/_build
+docs/apidocs
