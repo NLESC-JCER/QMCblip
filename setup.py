@@ -7,16 +7,16 @@ with open("requirements.txt", "r") as fh:
     dependencies = fh.readlines()
 
 setuptools.setup(
-    name="CHAMP-ASE-FLARE",
-    version="0.0.1",
+    name="QMCblip",
+    version="1.0.0",
     author="Emiel Slootman",
     author_email="e.slootman@esciencecenter.nl",
-    description="A small package to couple CHAMP to ASE and FLARE",
+    description="A small package to couple Quantum Monte Carlo codes to Machine Learning Force Fields through ASE.",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/NLESC-JCER/CHAMP-ASE-FLARE",
+    url="https://github.com/NLESC-JCER/QMCblip",
     project_urls={
-        "Bug Tracker": "https://github.com/NLESC-JCER/CHAMP-ASE-FLARE/issues",
+        "Bug Tracker": "https://github.com/NLESC-JCER/QMCblip/issues",
     },
     classifiers=[
         "Programming Language :: Python :: 3",

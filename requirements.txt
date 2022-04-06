@@ -1,6 +1,6 @@
-ase
+ase==3.22.1
 mir-flare==0.2.4
 flare-pp==0.1.1
-numpy
-matplotlib
-pydantic
+numpy==1.20.3
+matplotlib==3.1.2
+pydantic==0.1.3
