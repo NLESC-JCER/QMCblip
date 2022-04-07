@@ -20,7 +20,6 @@ autodoc_moc_imports = [
     'numpy',
     'mir-flare',
     'flare-pp',
-    'ase',
     'matplotlib',
     'pydantic'
 ]
