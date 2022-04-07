@@ -7,26 +7,57 @@ from pathlib import PosixPath, Path
 
 
 class Settings(BaseModel):
+    """Data class containing CHAMP configuration.
+
+    This class can hold the neccessery configuration to run CHAMP.
+    """
     class General(BaseModel):
+        """General module class.
+        """
+
         title: str
+        """:obj:`str`: title of the simulation."""
+
         pool: DirectoryPath = Field(PosixPath('./pool/'), postfix="/")
+        """:obj:`path <pathlib.Path>`, optional: location of the pool directory."""
+        
         basis: str
+        """:obj:`str`: basis to use (located in pool)."""
+        
         pseudopot: Optional[str]
+        """:obj:`str`, optional: pseudopotential to use."""
+        
         mode: str = 'vmc_one_mpi1'
+        """:obj:`str`, optional: QMC mode."""
+        
         seed: int = 1837465927472523
+        """int, optional: seed for CHAMP."""
+        
         eunit: str = "Hartrees"
+        """:obj:`str`, optional: energy units."""
 
     class Ase(BaseModel):
+        """ASE module class.
+        """
         iase: int = 1
         iforce_analy: int = 0
         node_cutoff: int = 1
         enode_cutoff: float = 0.05
 
     class Electrons(BaseModel):
+        """Electrons module class.
+        """
+
         nup: int
+        """:obj:`int`: amount of electrons with upspin."""
+
         nelec: int
+        """:obj:`int`: total amount of electrons."""
 
     class Optwf(BaseModel):
+        """Wavefunction optimization module class.
+        """
+
         ioptwf: int = 1
         ioptci: int = 1
         ioptjas: int = 1
@@ -38,23 +69,43 @@ class Settings(BaseModel):
         energy_tol: float = 0.0
 
     class BlockingVmc(BaseModel):
+        """VMC module class.
+        """
+
         vmc_nstep: int = 20
         vmc_nblk: int = 400
         vmc_nblkeq: int = 1
         vmc_nconf_new: int = 0
 
     class Pseudo(BaseModel):
+        """Pseudopotential module class.
+        """
+
         nloc: int = 4
         nquad: int = 6
 
     general: General
     molecule: Path = Field(prefix="load ")
+    """:obj:`path <pathlib.Path>`: path to molecule geometry."""
+
     basis_num_info: FilePath = Field(prefix="load ")
+    """:obj:`path <pathlib.Path>`: path to basis info."""
+
     determinants: FilePath = Field(prefix="load ")
+    """:obj:`path <pathlib.Path>`: path to the determinants file."""
+    
     orbitals: FilePath = Field(prefix="load ")
+    """:obj:`path <pathlib.Path>`: path to the orbitals file."""
+
     jastrow: FilePath = Field(prefix="load ")
+    """:obj:`path <pathlib.Path>`: path to the jastrow file."""
+
     jastrow_der: FilePath = Field(prefix="load ")
+    """:obj:`path <pathlib.Path>`: path to the jastrow derivatives file."""
+
     symmetry: Optional[FilePath] = Field(prefix="load ")
+    """optional: path to the symmetry file."""
+
     ase: Optional[Ase]
     electrons: Electrons
     optwf: Optional[Optwf]
@@ -62,11 +113,10 @@ class Settings(BaseModel):
     blocking_vmc: Optional[BlockingVmc]
 
     def write(self, filename='vmc.inp'):
-        """
-        Write a this dataclass containing the CHAMP configuration to an input file.
+        """Write a this dataclass containing the CHAMP configuration to an input file.
 
-        Arguments:
-        filename -- input file to write to
+        Args:
+            filename (:obj:`str`, optional): input file to write to.
         """
         f = open(filename, 'w')
         
@@ -91,14 +141,13 @@ class Settings(BaseModel):
 
     @classmethod
     def read(cls: Type['Model'], filename: Union[str, Path]) -> 'Model':
-        """
-        Read the CHAMP input file and convert it to a dictionary format
+        """Read the CHAMP input file and convert it to a dictionary format
 
-        Arguments:
-        filename -- file of the input file to read and write to
+        Args:
+            filename (:obj:`str`, optional): file of the input file to read and write to.
 
-        Output:
-        Settings object containing the CHAMP configuration
+        Returns:
+            :obj:`Settings`: Settings object containing CHAMP configuration.
         """
         # Check if the file exists
         if not exists(filename):
@@ -150,11 +199,7 @@ class Settings(BaseModel):
 
    
     def use_opt_wf(self):
-        """
-        Function to replace the orbitals, determinants and jastrow with the optimized files.
-
-        Arguments:
-        filename -- file of the input file to  write to
+        """Function to replace the orbitals, determinants and jastrow with the optimized files.
         """
         opt = ["det_optimal.1.iter*", "orbitals_optimal.1.iter*", "jastrow_optimal.1.iter*"]
         keys = ["determinants", "orbitals", "jastrow"]
@@ -168,12 +213,22 @@ class Settings(BaseModel):
                 setattr(self, keys[ind], opt[ind])
 
     def todict(self):
+        """Return a dictionary of the class.
+
+        Returns:
+            :obj:`str`: json dictionary.
+        """
         return self.json(exclude_none=True)
 
 def cleanup(*args):
-    """
-    Remove files created by CHAMP. Add files as arguments to include (if not in default list)
+    """Remove files created by CHAMP. 
+    
+    This function can cleanup the directory of the simulation. 
+    Add files as arguments to include (if not in default list)
     or exclude (if in default list) files.
+
+    Args:
+        *args: filesnames to include (if not in default list) or exclude (if in default list).
     """
     # Default list of the files that will be removed
     standard = ["force_analytic", "restart_vmc", "output.log", "parser.log", "orbitals_optimal.1.*",

@@ -4,18 +4,37 @@ import matplotlib.pyplot as plt
 
 
 class Analyze():
+    """Tool for analyzing OTF data.
+
+    Args:
+        file (Path): otf file to analyze.
+
+    Attributes:
+        results (dict): dictionary containing simulation results.
+    """
 
     def __init__(self, file):
         self.otf = otf_parser.OtfAnalysis(file, calculate_energy=True)
         self.results = None
 
     def to_xyz(self, filename=""):
+        """Create an .xyz format file from the OTF trajectory.
+
+        Args:
+            filename (str): filename for the .xyz file (include extension).
+        """
         if (filename == ""):
             self.otf.to_xyz('traj.xyz')
         else:
             self.otf.to_xyz(filename)
 
     def get_data(self):
+        """Retrieve the data from the OTF file.
+
+        Note:
+            The data will be stores in the results attributes.
+            Allowed keys are: times, potential energy, kinetic energy, total energy, temperature.
+        """
         dt = self.otf.header['dt']
 
         frames = np.arange(len(self.otf.times)+1)
@@ -59,6 +78,11 @@ class Analyze():
         return self.results
     
     def plot_energy(self, filename=""):
+        """Plot the energy
+
+        Args:
+            filename (str): file to save the energy plot to (leave empty if not wanted).
+        """
         if self.results is None:
             self.get_data()
 
@@ -80,6 +104,11 @@ class Analyze():
             plt.savefig(filename)
 
     def plot_temperature(self, filename=""):
+        """Plot the temperature
+
+        Args:
+            filename (str): file to save the temperature plot to (leave empty if not wanted).
+        """
         if self.results is None:
             self.get_data()
 

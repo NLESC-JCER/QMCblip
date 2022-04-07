@@ -1,14 +1,26 @@
-.. QMCblip documentation master file, created by
-   sphinx-quickstart on Wed Apr  6 15:21:41 2022.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
 Quantum Monte Carlo Based Learning of Interatomic Potentials
 ============================================================
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+   :maxdepth: 1
+   :caption: QMCblip
+
+   installation
+   qmcblip/champ
+   qmcblip/flare
+   qmcblip/analyze
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Examples
+
+.. toctree::
+   :maxdepth: 1
+   :caption: API
+
+   source/qmcblip
+
+
 
 
 

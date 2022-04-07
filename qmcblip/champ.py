@@ -8,8 +8,20 @@ from qmcblip.champio import Settings
 
 
 class CHAMP(FileIOCalculator):
-    """
-    An ASE calculator for the Quantum Monte Carlo software CHAMP
+    """ASE Calculator for CHAMP.
+
+    An ASE calculator for the Quantum Monte Carlo software CHAMP.
+
+    Args:
+        vmc_in (:obj:`str`, optional): File to read CHAMP settings from.
+        vmc_out (:obj:`str`, optional):The output file of CHAMP.
+        force_file (:obj:`str`, optional): The file that CHAMP writes the forces and energies to.
+        pos_file (:obj:`str`, optional): The file from which CHAMP will read to location of the atoms.
+        champ_loc (:obj:`str`, optional): Location of the CHAMP executable.
+        nodefile (:obj:`str`, optional): If set, the calculator will run on multiple nodes for CHAMP.
+        ncore (:obj:`str`, optional): Amount of cores to run CHAMP on.
+        settings (:obj:`Settings<qmcblip.champio.Settings>`, optional): Input settings for CHAMP (OVERRULES VMC.INP).
+        use_opt_wf (:obj:`bool`, optional): Use the optimized WF from last step.
     """ 
 
     # Stress only for FLARE compatibility
@@ -35,18 +47,6 @@ class CHAMP(FileIOCalculator):
     def __init__(self, restart=None,
                 ignore_bad_restart_file=FileIOCalculator._deprecated,
                 label='CHAMP', atoms=None, **kwargs):
-        """
-        Keyword arguments:
-        vmc_in -- The input file for CHAMP (default 'vmc.inp')
-        vmc_out -- The output file of CHAMP (default 'vmc.out')
-        force_file -- The file that CHAMP writes the forces and energies to (default 'write_forces')
-        pos_file -- The file from which CHAMP will read to location of the atoms (default 'molecule.xyz')
-        champ_loc -- Location of the CHAMP executable (default '/usr/bin/vmc.mov1')
-        nodefile -- If set, the calculator will run on multiple nodes for CHAMP
-        ncore -- Amount of cores to run CHAMP on (default 1)
-        settings -- Input settings for CHAMP (OVERRULES VMC.INP)
-        use_opt_wf -- Use the optimized WF from last step (default False)
-        """
         
         FileIOCalculator.__init__(self, restart, ignore_bad_restart_file,
                                 label, atoms, **kwargs)
@@ -85,9 +85,12 @@ class CHAMP(FileIOCalculator):
                     + " -o " + self.parameters['vmc_out']
 
     def configure(self, **kwargs):
-        """
-        (Re)configure the CHAMP calculator by setting the keyword arguments.
+        """(Re)configure the CHAMP calculator by setting the keyword arguments.
+
         The tags for the vmc.inp can also be set here.
+
+        Args:
+            **kwargs: keyword arguments.
         """
         self.set(**kwargs)
 

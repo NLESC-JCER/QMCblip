@@ -8,7 +8,7 @@ from flare_pp.sparse_gp import SGP_Wrapper
 from flare_pp.sparse_gp_calculator import SGP_Calculator
 
 # flare imports
-from caf.otf import C_ASE_OTF as ASE_OTF
+from qmcblip.otf import C_ASE_OTF as ASE_OTF
 from flare import otf_parser
 
 # ASE imports
@@ -18,7 +18,7 @@ from ase.atoms import Cell
 from ase.md.velocitydistribution import MaxwellBoltzmannDistribution, \
     Stationary, ZeroRotation
 
-from caf.champ import CHAMP
+from qmcblip.champ import CHAMP
 
 np.random.seed(12345)
 
