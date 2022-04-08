@@ -1,0 +1,4 @@
+ase==3.22.1
+mir-flare==0.2.4
+numpy==1.20.3
+pydantic==1.9.0

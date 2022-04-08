@@ -17,12 +17,8 @@ sys.path.insert(0, os.path.abspath('..'))
 
 
 autodoc_mock_imports = [
-    'numpy',
-    'flare',
     'flare-pp',
-    'ase',
-    'matplotlib',
-    'pydantic'
+    'matplotlib'
 ]
 
 
