@@ -107,13 +107,15 @@ otf_params = {'init_atoms': init_atoms, 'output_name': output_name,
               
 champ_calc = CHAMP(champ_loc="/home/user/bin/vmc.mov1", force_file="write_forces", ncore=72, nodefile="nodefile")
 
+changes = []
+
 # Create OTF object.
 timestep = 0.5 * units.fs
 number_of_steps = 1000
 test_otf = ASE_OTF(
     atoms, timestep=timestep, number_of_steps=number_of_steps,
     dft_calc=champ_calc, md_engine=md_engine, md_kwargs=md_dict,
-    calculator=flare_calculator, **otf_params)
+    update_settings=changes, calculator=flare_calculator, **otf_params)
 
 # Run on-the-fly dynamics.
 test_otf.run()

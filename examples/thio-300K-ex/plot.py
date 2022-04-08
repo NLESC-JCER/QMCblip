@@ -1,4 +1,4 @@
-from caf.tools import Analyze
+from qmcblip.tools import Analyze
 import matplotlib.pyplot as plt
 
 t = Analyze('thio.out')

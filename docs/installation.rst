@@ -20,7 +20,7 @@ To install the code
 
  * clone the repository ``git clone https://github.com/NLESC-JCER/QMCblip.git``
  * go there ``cd QMCblip``
- * install the module ``pip insall -e ./``
+ * install the module ``pip install -e ./``
 
 
 Installing CHAMP

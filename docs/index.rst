@@ -14,6 +14,9 @@ Quantum Monte Carlo Based Learning of Interatomic Potentials
    :maxdepth: 1
    :caption: Examples
 
+   examples/thio-300K
+   examples/thio-300K-ex
+
 .. toctree::
    :maxdepth: 1
    :caption: API

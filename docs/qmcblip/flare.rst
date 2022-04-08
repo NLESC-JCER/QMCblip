@@ -58,6 +58,7 @@ This array can be empty.
 >>>                    md_engine = md_engine,
 >>>                    md_kwargs = md_kwargs,
 >>>                    update_settings = changes,
+>>>                    calculator=flare_calculator,
 >>>                    **otf_params)
 
 See the `FLARE documentation`_ for more information about the other parts in the code on this page.
