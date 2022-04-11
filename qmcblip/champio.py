@@ -135,10 +135,10 @@ class Settings(BaseModel):
                 f.write("%endmodule\n\n")
             else:
                 if 'prefix' in schema[item[0]]:
-                    if item[1] is note None:
+                    if item[1] is not None:
                         f.write(schema[item[0]]['prefix'] + item[0] + " " + str(item[1]) + '\n')
                 else:
-                    if item[1] is note None:
+                    if item[1] is not None:
                         f.write(item[0] + " " + str(item[1]) + '\n')
 
         f.close()
