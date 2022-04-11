@@ -8,7 +8,7 @@ with open("requirements.txt", "r") as fh:
 
 setuptools.setup(
     name="QMCblip",
-    version="1.0.0",
+    version="1.0.1",
     author="Emiel Slootman",
     author_email="e.slootman@esciencecenter.nl",
     description="A small package to couple Quantum Monte Carlo codes to Machine Learning Force Fields through ASE.",

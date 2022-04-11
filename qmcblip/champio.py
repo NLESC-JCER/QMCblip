@@ -127,15 +127,19 @@ class Settings(BaseModel):
                 f.write("\n%module " + item[0] + "\n")
                 for ind2, item2 in enumerate(item[1]):
                     if 'postfix' in schema2[item2[0]]:
-                        f.write("\t" + item2[0] + " " + str(item2[1]) + schema2[item2[0]]['postfix'] + "\n")
+                        if item2[1] is not None:
+                            f.write("\t" + item2[0] + " " + str(item2[1]) + schema2[item2[0]]['postfix'] + "\n")
                     else:
-                        f.write("\t" + item2[0] + " " + str(item2[1]) + "\n")
+                        if item2[1] is not None:
+                            f.write("\t" + item2[0] + " " + str(item2[1]) + "\n")
                 f.write("%endmodule\n\n")
             else:
                 if 'prefix' in schema[item[0]]:
-                    f.write(schema[item[0]]['prefix'] + item[0] + " " + str(item[1]) + '\n')
+                    if item[1] is note None:
+                        f.write(schema[item[0]]['prefix'] + item[0] + " " + str(item[1]) + '\n')
                 else:
-                    f.write(item[0] + " " + str(item[1]) + '\n')
+                    if item[1] is note None:
+                        f.write(item[0] + " " + str(item[1]) + '\n')
 
         f.close()
 
