@@ -237,7 +237,7 @@ def quicksim(atoms, timestep, steps, calc, otfsettings = OTFSettings(), changes 
 
     Args:
         atoms (:obj:`Atoms <ase.Atoms>`): atoms object.
-        timestep (:obj:`float`): timestep of MD in ps.
+        timestep (:obj:`float`): timestep of MD in fs.
         steps (:obj:`int`): amount of MD steps.
         otfsettings (:obj:`OTFSettings`, optional): OTF settings object, 
             using defaults if not given.
