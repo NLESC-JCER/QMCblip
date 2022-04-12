@@ -16,5 +16,5 @@ settings = OTFSettings(theory=OTFSettings.FLAREPP())
 calc = CHAMP(champ_loc="/home/user/bin/vmc.mov1", ncore=4)
 
 # Do a simulation with CHAMP and FLARE++
-# With a timestep of 0.5ps and 100 steps
+# With a timestep of 0.5fs and 100 steps
 quicksim(atoms, 0.5, 100, calc, settings)
