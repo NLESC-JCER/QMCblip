@@ -21,19 +21,41 @@ from .otf import C_ASE_OTF as ASE_OTF
 
 
 class OTFSettings(BaseModel):
+    """Dataclass containing FLARE(++) configuration.
+    """"
 
     class Theory(BaseModel):
+        """Abstract baseclass.
+        """
         pass
 
     class FLARE(Theory):
+        """FLARE dataclass.
+        """"
+
         kernels: List[str] = ['twobody', 'threebody']
+        """:obj:`List[str]`, optional: n-body functions to use."""
+
         cutoffs: List[float] = [5.0, 3.5]
+        """:obj:`List[float]`, optional: cutoff for the n-body functions."""
+
         random: bool = True
+        """:obj:`bool`, optional: randomize hyperparameters."""
+
         hyp_labels: List[str] = ['sig2','ls2','sig3','ls3','noise']
+        """:obj:`List[str]`, optional: hyperparameter labels."""
+
         opt_algorithm: str = 'L-BFGS-B'
+        """:obj:`str`, optional: hyperparamter optimization algorithm."""
+
         n_cpu: int = 1
+        """:obj:`int`, optional: amount of CPU cores to run FLARE on."""
+
         update_style: str = "add_n"
+        """:obj:`str`, optional: update algorithm for GP."""
+
         update_threshold: float = None
+        """:obj:`str`, optional: update threshold for GP, in eV/Ang."""
 
         gp_model: Any = None
         flare_calc: Any = None
@@ -85,21 +107,54 @@ class OTFSettings(BaseModel):
 
 
     class FLAREPP(Theory):
+        """FLARE++ dataclass.
+        """
+
         update_style: str = "threshold" 
+        """:obj:`str`, optional: update algorithm for GP."""
+
         update_threshold: float = 0.005
+        """:obj:`str`, optional: update threshold for GP, in eV/Ang."""
+
         opt_algorithm: str = 'L-BFGS-B'
+        """:obj:`str`, optional: hyperparamter optimization algorithm."""
+
         max_iterations: int = 10
+        """:obj:`int`, optional: maximum number of hyperparameter optimization 
+            steps per MD step."""
+
         variance_type: str = 'local'
+        """:obj:`str`, optional: uncertainty type on energy."""
+
         sigma_e: float = 0.12
+        """:obj:`float`, optional: energy noise per atom, in kcal/mol."""
+
         sigma_f: float = 0.115
+        """:obj:`float`, optional: force noise, in kcal/mol/Ang."""
+
         sigma_s: float = 0.014
+        """:obj:`float`, optional: stress noise, in kcal/Ang^3."""
+
         cutoff: float = 5.0
+        """:obj:`float`, optional: cutoff of kernel in Ang."""
+
         sigma: float = 2.0
+        """:obj:`float`, optional: kernel thing in eV."""
+
         power: int = 2
+        """:obj:`int`, optional: power of the kernel."""
+
         cutoff_function: str = "quadratic"
+        """:obj:`str`, optional: cutoff function."""
+
         radial_basis: str = "chebyshev"
+        """:obj:`str`, optional: radial basis."""
+
         N: int = 12
+        """:obj:`int`, optional: number of radial basis functions."""
+
         lmax: int = 3
+        """:obj:`int`, optional: largest L included in spherical harmonics."""
 
         kernel: Any = None
         descriptor_calculator: Any = None
@@ -154,11 +209,22 @@ class OTFSettings(BaseModel):
 
 
     theory: Theory = FLARE()
+    """:obj:`Theory`: FLARE or FLAREPP."""
+
     output_name: str = 'OTF'
+    """:obj:`str`, optional: name of the files to write to."""
+
     std_tolerance_factor: float = -0.01
+    """:obj:`float`, optional: standard tolerance with respect to noise. Negative for absolute (in eV/Ang)."""
+
     min_steps_with_model: int = 0
+    """:obj:`int`, optional: minimum steps with model in between ab-initio calls."""
+
     freeze_hyps: int = 10
+    """:obj:`int`, optional: freeze hyperparameters after this many ab-initio calls."""
+
     write_model: int = 0
+    """:obj:`int`, optional: keep at 0 for FLARE++."""
 
 
 
