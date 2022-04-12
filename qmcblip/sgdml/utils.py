@@ -46,7 +46,7 @@ def db_to_sgdml(db_file, dataset_file, name=None):
     # File checks
     if not exists(db_file):
         raise FileNotFoundError(db_file + " is not in this directory!")
-    if exists(dataser_file):
+    if exists(dataset_file):
         print(dataset_file + " already exists. Overwriting...")
 
     basename = os.path.splitext(os.path.basename(db_file))[0]

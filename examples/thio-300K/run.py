@@ -8,7 +8,7 @@ from flare_pp.sparse_gp import SGP_Wrapper
 from flare_pp.sparse_gp_calculator import SGP_Calculator
 
 # flare imports
-from qmcblip.otf import C_ASE_OTF as ASE_OTF
+from qmcblip.flare.otf import C_ASE_OTF as ASE_OTF
 from flare import otf_parser
 
 # ASE imports

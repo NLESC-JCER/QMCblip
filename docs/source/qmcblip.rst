@@ -13,6 +13,7 @@ Subpackages
    :maxdepth: 4
 
    qmcblip.flare
+   qmcblip.sgdml
 
 Submodules
 ----------

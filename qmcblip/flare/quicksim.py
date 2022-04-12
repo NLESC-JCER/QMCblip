@@ -22,7 +22,7 @@ from .otf import C_ASE_OTF as ASE_OTF
 
 class OTFSettings(BaseModel):
     """Dataclass containing FLARE(++) configuration.
-    """"
+    """
 
     class Theory(BaseModel):
         """Abstract baseclass.
@@ -31,7 +31,7 @@ class OTFSettings(BaseModel):
 
     class FLARE(Theory):
         """FLARE dataclass.
-        """"
+        """
 
         kernels: List[str] = ['twobody', 'threebody']
         """:obj:`List[str]`, optional: n-body functions to use."""
