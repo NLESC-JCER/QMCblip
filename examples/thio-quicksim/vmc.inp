@@ -1,0 +1,73 @@
+%module general
+    title        H2
+    pool         ./pool/
+    basis        BFD-Da
+    pseudopot    BFD
+    mode         vmc_one_mpi1
+    nloc        4
+    nquad       12
+%endmodule
+
+load molecule        molecule.xyz
+load basis_num_info  pool/BFD-Da.bfinfo
+
+load determinants    pool/det_opt_Monika
+load orbitals        pool/orbitals_opt_Monika
+load jastrow         pool/jastrow_opt_Monika
+load jastrow_der     pool/jastrow_der
+
+%module ase
+    iase          1
+    iforce_analy  0
+    node_cutoff   1 
+    enode_cutoff  0.05
+    imetro        6
+    deltar        5. 
+    deltat        1.
+    delta         1. 
+    fbias         1.
+    ianalyt_lap   1 
+    ijas          4
+    isc           2 
+    nspin1        1 
+    nspin2        1 
+    ifock         0
+    unit          Hartrees
+    mass          0.5
+    nforce        1
+    seed          1837465927472523
+    ipr           -1
+%endmodule
+
+%module electrons
+    nup           13
+    nelec         26
+%endmodule
+
+%module optwf
+    ioptwf        1
+    ioptci        1
+    ioptjas       1
+    ioptorb       1
+    method        'sr_n'
+    multiple_adiag 0
+    ncore         0
+    nextorb       100
+    nblk_max      40
+    no_active     1
+    nopt_iter     1
+    sr_tau        0.05
+    sr_eps        0.001
+    sr_adiag      0.01
+    isample_cmat  0
+    energy_tol    0.0
+%endmodule
+
+%module blocking_vmc
+    vmc_nstep     2
+    vmc_nblk      40
+    vmc_nblkeq    1
+    vmc_nconf_new 0
+%endmodule
+
+
