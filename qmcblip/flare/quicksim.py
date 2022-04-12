@@ -10,9 +10,11 @@ import flare_pp._C_flare as flare_pp
 from flare_pp.sparse_gp import SGP_Wrapper
 from flare_pp.sparse_gp_calculator import SGP_Calculator
 
+from ase import units
+
 # Dataclass imports
-from pydantic import BaseModel
-from typing import Union, List
+from pydantic import BaseModel, Field
+from typing import Union, List, Any
 
 # CAF imports
 from .otf import C_ASE_OTF as ASE_OTF
@@ -20,7 +22,10 @@ from .otf import C_ASE_OTF as ASE_OTF
 
 class OTFSettings(BaseModel):
 
-    class FLARE(BaseModel):
+    class Theory(BaseModel):
+        pass
+
+    class FLARE(Theory):
         kernels: List[str] = ['twobody', 'threebody']
         cutoffs: List[float] = [5.0, 3.5]
         random: bool = True
@@ -30,7 +35,10 @@ class OTFSettings(BaseModel):
         update_style: str = "add_n"
         update_threshold: float = None
 
-        def get_model(self, atoms):
+        gp_model: Any = None
+        flare_calc: Any = None
+
+        def get_calc(self, atoms):
             """Make a FLARE calculator object.
 
             Args:
@@ -58,7 +66,7 @@ class OTFSettings(BaseModel):
             else:
                 parallel = False
 
-            gp_model = GaussianProcess(
+            self.gp_model = GaussianProcess(
                 kernels = self.kernels,
                 component = 'mc',
                 hyps = hyps,
@@ -69,14 +77,14 @@ class OTFSettings(BaseModel):
                 n_cpus = self.n_cpu
             )
 
-            calc = FLARE_Calculator(gp_model, 
+            self.flare_calc = FLARE_Calculator(self.gp_model, 
                                     par = True, 
                                     mgp_model = None,
                                     use_mapping = False)
-            return calc
+            return self.flare_calc
 
 
-    class FLAREPP(BaseModel):
+    class FLAREPP(Theory):
         update_style: str = "threshold" 
         update_threshold: float = 0.005
         opt_algorithm: str = 'L-BFGS-B'
@@ -84,14 +92,19 @@ class OTFSettings(BaseModel):
         variance_type: str = 'local'
         sigma_e: float = 0.12
         sigma_f: float = 0.115
-        simga_s: float = 0.014
-        cutoff: float = 5
-        sigma: float = 2
+        sigma_s: float = 0.014
+        cutoff: float = 5.0
+        sigma: float = 2.0
         power: int = 2
         cutoff_function: str = "quadratic"
         radial_basis: str = "chebyshev"
         N: int = 12
         lmax: int = 3
+
+        kernel: Any = None
+        descriptor_calculator: Any = None
+        gp_model: Any = None
+        flare_calc: Any = None
 
         def get_calc(self, atoms):
             """Make a FLARE++ calculator object.
@@ -106,16 +119,13 @@ class OTFSettings(BaseModel):
             species_map = dict()
             for ind, num in enumerate(set(atoms.symbols.numbers)):
                 species_map[num] = ind
-            cutoff = self.cutoff
-            sigma = self.sigma
-            power = self.power
-            kernel = flare_pp.NormalizedDotProduct(sigma, power)
-            many_body_cutoffs = [cutoff]
-            radial_hyps = [0., cutoff]
+            self.kernel = flare_pp.NormalizedDotProduct(self.sigma, self.power)
+            many_body_cutoffs = [self.cutoff]
+            radial_hyps = [0., self.cutoff]
             cutoff_hyps = []
             n_species = len(species_map)
             descriptor_settings = [n_species, self.N, self.lmax]
-            descriptor_calculator = flare_pp.B2(
+            self.descriptor_calculator = flare_pp.B2(
                                                 self.radial_basis,
                                                 self.cutoff_function,
                                                 radial_hyps,
@@ -129,21 +139,21 @@ class OTFSettings(BaseModel):
 
             bounds = [(None, None), (sigma_e, None), (None, None), (None, None)]
 
-            gp_model = SGP_Wrapper([kernel], [descriptor_calculator], cutoff,
+            self.gp_model = SGP_Wrapper([self.kernel], [self.descriptor_calculator], self.cutoff,
                                 sigma_e, sigma_f, sigma_s, species_map,
                                 variance_type=self.variance_type,
                                 stress_training=False,
-                                opt_method=self.opt_method,
+                                opt_method=self.opt_algorithm,
                                 bounds=bounds,
                                 max_iterations=self.max_iterations)
 
-            calc = SGP_Calculator(gp_model)
+            self.flare_calc = SGP_Calculator(self.gp_model)
 
-            return calc
+            return self.flare_calc
 
 
 
-    theory: Union[FLARE, FLAREPP] = FLARE
+    theory: Theory = FLARE()
     output_name: str = 'OTF'
     std_tolerance_factor: float = -0.01
     min_steps_with_model: int = 0
@@ -153,7 +163,7 @@ class OTFSettings(BaseModel):
 
 
 
-def quicksim(atoms, timestep, steps, otfsettings = OTFSettings(), changes = []):
+def quicksim(atoms, timestep, steps, calc, otfsettings = OTFSettings(), changes = []):
     """A quick-to-setup simulation using FLARE or FLARE++.
 
     This function allows the user to do a quick simulation using
@@ -171,8 +181,6 @@ def quicksim(atoms, timestep, steps, otfsettings = OTFSettings(), changes = []):
 
     flare_calculator = otfsettings.theory.get_calc(atoms)
 
-    atoms.set_calculator(flare_calculator)
-
     md_engine = 'CustomVerlet'
     md_kwargs = {}
 
@@ -189,13 +197,14 @@ def quicksim(atoms, timestep, steps, otfsettings = OTFSettings(), changes = []):
                 }
 
 
-    otf = ASE_OTF(atoms, 
-                    timestep = timestep * units.fs,
-                    number_of_steps = steps,
-                    dft_calc = calc,
-                    md_engine = md_engine,
-                    md_kwargs = md_kwargs,
-                    update_settings = changes,
-                    **otf_params)
+    sim = ASE_OTF(atoms, 
+                timestep = timestep * units.fs,
+                number_of_steps = steps,
+                dft_calc = calc,
+                md_engine = md_engine,
+                md_kwargs = md_kwargs,
+                update_settings = changes,
+                calculator = flare_calculator,
+                **otf_params)
 
-    otf.run()
+    sim.run()
