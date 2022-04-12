@@ -6,6 +6,14 @@ qmcblip package
    :undoc-members:
    :show-inheritance:
 
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   qmcblip.flare
+
 Submodules
 ----------
 
@@ -14,6 +22,4 @@ Submodules
 
    qmcblip.champ
    qmcblip.champio
-   qmcblip.otf
    qmcblip.tools
-   qmcblip.verlet
