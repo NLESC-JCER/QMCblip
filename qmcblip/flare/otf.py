@@ -1,3 +1,4 @@
+"""On-the-fly training classes adapted for CHAMP."""
 # MIT License
 
 # Copyright (c) 2019 Harvard University
@@ -33,7 +34,6 @@ from flare.utils.learner import is_std_in_bound
 from ase import units
 
 from .verlet import CustomVerlet
-
 
 class C_OTF(OTF):
     """Trains a Gaussian process force field on the fly during molecular dynamics.
@@ -219,7 +219,7 @@ class C_OTF(OTF):
                 counter = 0
 
             counter += 1
-            # TODO: Reinstate velocity rescaling.
+
             self.md_step(forces=self.structure.forces)  # update positions by Verlet
             self.rescale_temperature(self.structure.positions)
 
@@ -251,7 +251,7 @@ class C_OTF(OTF):
 
 class C_ASE_OTF(ASE_OTF, C_OTF):
     """On-the-fly training module using ASE MD engine, a subclass of OTF.
-    
+
     Args:
         atoms (ASE Atoms): the ASE Atoms object for the on-the-fly MD run.
         timestep (:obj:`float`): the timestep in MD. Please use ASE units, e.g. if the
@@ -264,9 +264,10 @@ class C_ASE_OTF(ASE_OTF, C_OTF):
             are supported.
         md_kwargs (dict): specify the args for MD as a dictionary, the args are
             as required by the ASE MD modules consistent with the `md_engine`.
-        update_settings (List[List[dict]]): array containg CHAMP simulation 
+        update_settings (List[List[dict]]): array containg CHAMP simulation
             parameters to update.
-        calculator (:obj:`Calculator <ase.calculators.calculator.Calculator>`): ASE calculator. Must have "get_uncertainties" method
+        calculator (:obj:`Calculator <ase.calculators.calculator.Calculator>`): ASE calculator.
+            Must have "get_uncertainties" method
           implemented.
         trajectory (ASE Trajectory): default `None`, not recommended,
             currently in experiment.

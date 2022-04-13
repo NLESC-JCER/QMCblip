@@ -1,12 +1,12 @@
+"""Tools for simulations with sGDML."""
 import os
 from os.path import exists
 
+import numpy as np
 from ase.io import read
 
-import numpy as np
-
 from sgdml import __version__
-from sgdml.utils import io, ui
+from sgdml.utils import io
 
 def db_to_sgdml(db_file, dataset_file, name=None):
     """Convert an ASE DB to a sGDML dataset.
@@ -61,11 +61,11 @@ def db_to_sgdml(db_file, dataset_file, name=None):
     calc = mols[0].get_calculator()
 
     if 'forces' not in calc.results:
-        raise Error("Forces are missing in the database file!")
+        raise ValueError("Forces are missing in the database file!")
 
     Z = np.array([mol.get_atomic_numbers() for mol in mols])
     if not (Z == Z[0]).all():
-        raise Error('Order of atoms changes accross database!')
+        raise ValueError('Order of atoms changes accross database!')
 
     R = np.array([mol.get_positions() for mol in mols])
     z = Z[0]

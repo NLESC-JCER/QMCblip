@@ -1,7 +1,10 @@
+"""Custom Verlet scheme."""
 import numpy as np
 from ase.md.verlet import VelocityVerlet
 
 class CustomVerlet(VelocityVerlet):
+    """Custom Verlet scheme for ASE and FLARE.
+    """
     def __init__(self, atoms, timestep=None, trajectory=None, logfile=None,
                  loginterval=1, dt=None, append_trajectory=False):
 

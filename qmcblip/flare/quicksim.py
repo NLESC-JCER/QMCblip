@@ -1,22 +1,16 @@
-# Import numpy and matplotlib
-import numpy as np
+"""Quickly run FLARE simulations."""
+from typing import Any, List
 
-# flare imports
-from flare import otf_parser
-from flare.gp import GaussianProcess
-from flare.ase.calculator import FLARE_Calculator
-from flare.utils.parameter_helper import ParameterHelper
 import flare_pp._C_flare as flare_pp
+from ase import units
 from flare_pp.sparse_gp import SGP_Wrapper
 from flare_pp.sparse_gp_calculator import SGP_Calculator
+from pydantic import BaseModel
 
-from ase import units
+from flare.ase.calculator import FLARE_Calculator
+from flare.gp import GaussianProcess
+from flare.utils.parameter_helper import ParameterHelper
 
-# Dataclass imports
-from pydantic import BaseModel, Field
-from typing import Union, List, Any
-
-# CAF imports
 from .otf import C_ASE_OTF as ASE_OTF
 
 
@@ -27,7 +21,6 @@ class OTFSettings(BaseModel):
     class Theory(BaseModel):
         """Abstract baseclass.
         """
-        pass
 
     class FLARE(Theory):
         """FLARE dataclass.
@@ -65,16 +58,16 @@ class OTFSettings(BaseModel):
 
             Args:
                 atoms (:obj:`Atoms <ase.Atoms>`): atoms object.
-            
+
             Returns:
-                :obj:`FLARE_Calculator <flare.ase.calculator.FLARE_Calculator>`: 
+                :obj:`FLARE_Calculator <flare.ase.calculator.FLARE_Calculator>`:
                     FLARE calculator object.
             """
-            parameters = dict()
+            parameters = {}
             for ind, nbody in enumerate(self.kernels):
                 parameters['cutoff_'+nbody] = self.cutoffs[ind]
             pm = ParameterHelper(
-                kernels = self.kernels,   
+                kernels = self.kernels,
                 random = self.random,
                 parameters=parameters
             )
@@ -99,8 +92,8 @@ class OTFSettings(BaseModel):
                 n_cpus = self.n_cpu
             )
 
-            self.flare_calc = FLARE_Calculator(self.gp_model, 
-                                    par = True, 
+            self.flare_calc = FLARE_Calculator(self.gp_model,
+                                    par = True,
                                     mgp_model = None,
                                     use_mapping = False)
             return self.flare_calc
@@ -110,7 +103,7 @@ class OTFSettings(BaseModel):
         """FLARE++ dataclass.
         """
 
-        update_style: str = "threshold" 
+        update_style: str = "threshold"
         """:obj:`str`, optional: update algorithm for GP."""
 
         update_threshold: float = 0.005
@@ -120,7 +113,7 @@ class OTFSettings(BaseModel):
         """:obj:`str`, optional: hyperparamter optimization algorithm."""
 
         max_iterations: int = 10
-        """:obj:`int`, optional: maximum number of hyperparameter optimization 
+        """:obj:`int`, optional: maximum number of hyperparameter optimization
             steps per MD step."""
 
         variance_type: str = 'local'
@@ -166,16 +159,15 @@ class OTFSettings(BaseModel):
 
             Args:
                 atoms (:obj:`Atoms <ase.Atoms>`): atoms object.
-            
+
             Returns:
-                :obj:`SGP_Calculator <flare_pp.sparse_gp_calculator.SGP_Calculator>`: 
+                :obj:`SGP_Calculator <flare_pp.sparse_gp_calculator.SGP_Calculator>`:
                     FLARE++ calculator object.
             """
-            species_map = dict()
+            species_map = {}
             for ind, num in enumerate(set(atoms.symbols.numbers)):
                 species_map[num] = ind
             self.kernel = flare_pp.NormalizedDotProduct(self.sigma, self.power)
-            many_body_cutoffs = [self.cutoff]
             radial_hyps = [0., self.cutoff]
             cutoff_hyps = []
             n_species = len(species_map)
@@ -189,7 +181,7 @@ class OTFSettings(BaseModel):
                                                 )
 
             sigma_e = self.sigma_e * len(atoms)
-            sigma_f = self.sigma_f 
+            sigma_f = self.sigma_f
             sigma_s = self.sigma_s
 
             bounds = [(None, None), (sigma_e, None), (None, None), (None, None)]
@@ -215,7 +207,9 @@ class OTFSettings(BaseModel):
     """:obj:`str`, optional: name of the files to write to."""
 
     std_tolerance_factor: float = -0.01
-    """:obj:`float`, optional: standard tolerance with respect to noise. Negative for absolute (in eV/Ang)."""
+    """:obj:`float`, optional: standard tolerance with respect to noise.
+        Negative for absolute (in eV/Ang).
+    """
 
     min_steps_with_model: int = 0
     """:obj:`int`, optional: minimum steps with model in between ab-initio calls."""
@@ -239,7 +233,7 @@ def quicksim(atoms, timestep, steps, calc, otfsettings = OTFSettings(), changes 
         atoms (:obj:`Atoms <ase.Atoms>`): atoms object.
         timestep (:obj:`float`): timestep of MD in fs.
         steps (:obj:`int`): amount of MD steps.
-        otfsettings (:obj:`OTFSettings`, optional): OTF settings object, 
+        otfsettings (:obj:`OTFSettings`, optional): OTF settings object,
             using defaults if not given.
         changes (optional): array containing settings to update for CHAMP (advanced).
     """
@@ -263,7 +257,7 @@ def quicksim(atoms, timestep, steps, calc, otfsettings = OTFSettings(), changes 
                 }
 
 
-    sim = ASE_OTF(atoms, 
+    sim = ASE_OTF(atoms,
                 timestep = timestep * units.fs,
                 number_of_steps = steps,
                 dft_calc = calc,
