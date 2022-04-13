@@ -35,7 +35,7 @@ jobs:
         COVERALLS_FLAG_NAME: python-${{ matrix.version }}
         COVERALLS_PARALLEL: true
 
- finish:
+  finish:
     needs: build
     runs-on: ubuntu-latest
     steps:
