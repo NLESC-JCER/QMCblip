@@ -26,7 +26,7 @@ jobs:
         pylint $(git ls-files 'qmcblip/*.py')
     - name: Test with pytest
       run: |
-        coverage run -m pytest qmcblip
+        coverage run -m pytest tests
         coverage report
     - name: Coveralls Parallel
       run: coveralls --service=github
