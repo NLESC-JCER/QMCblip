@@ -1,16 +1,15 @@
+"""Module for usefull tools."""
+from os import remove
+from os.path import exists
+
 import numpy as np
-
-from flare import otf_parser
-
-from ase.db import connect
-from ase.io.trajectory import Trajectory
+import periodictable as pt
 from ase import Atoms
 from ase.calculators.calculator import Calculator
+from ase.db import connect
+from ase.io.trajectory import Trajectory
 
-import periodictable as pt
-
-from os.path import exists
-from os import remove
+from flare import otf_parser
 
 def traj_to_db(traj_file, db_file, append=False):
     """Convert ASE trajectory file to database.
