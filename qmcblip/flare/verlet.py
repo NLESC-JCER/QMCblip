@@ -1,7 +1,10 @@
+"""Custom Verlet scheme."""
 import numpy as np
 from ase.md.verlet import VelocityVerlet
 
 class CustomVerlet(VelocityVerlet):
+    """Custom Verlet scheme for ASE and FLARE.
+    """
     def __init__(self, atoms, timestep=None, trajectory=None, logfile=None,
                  loginterval=1, dt=None, append_trajectory=False):
 
@@ -24,9 +27,9 @@ class CustomVerlet(VelocityVerlet):
             #p += 0.5 * self.dt * forces
         else:
             p += 0.5 * self.dt * (forces + self.old_forces)
-        
+
         atoms.set_momenta(p)
-        
+
         masses = atoms.get_masses()[:, np.newaxis]
         r = atoms.get_positions()
 

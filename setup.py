@@ -26,6 +26,7 @@ setuptools.setup(
         "License :: OSI Approved :: Apache Software License",
         "Operating System :: OS Independent",
     ],
+    test_suite='tests',
     packages=setuptools.find_packages(),
     install_requires=dependencies,
     python_requires=">=3.7, <3.10",

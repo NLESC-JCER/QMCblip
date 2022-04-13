@@ -1,11 +1,9 @@
+"""Tools for FLARE and CHAMP simulations."""
 import numpy as np
 
 from flare import otf_parser
 
 import matplotlib.pyplot as plt
-
-from ase.io.trajectory import Trajectory
-
 
 class Analyze():
     """Tool for analyzing OTF data.
@@ -27,7 +25,7 @@ class Analyze():
         Args:
             filename (str): filename for the .xyz file (include extension).
         """
-        if (filename == ""):
+        if filename == "":
             self.otf.to_xyz('traj.xyz')
         else:
             self.otf.to_xyz(filename)
@@ -43,7 +41,7 @@ class Analyze():
 
         frames = np.arange(len(self.otf.times)+1)
 
-        self.results = dict()
+        self.results = {}
 
         self.dft = self.otf.dft_frames
         self.nondft = [i for i in frames if i not in self.dft]
@@ -74,13 +72,13 @@ class Analyze():
         self.results['total energy'] = kinE[2:] + potE[1:-1]
         self.results['temperature'] = temp[2:]
 
-        if (max(self.dft) > max(self.nondft)):
+        if max(self.dft) > max(self.nondft):
             self.dft = self.dft[:-1]
         else:
             self.nondft = self.nondft[:-1]
 
         return self.results
-    
+
     def plot_energy(self, filename=""):
         """Plot the energy
 
@@ -100,11 +98,13 @@ class Analyze():
         plt.plot(times, totE - totE[0], label="Total Energy")
         plt.plot(times, potE - potE[0], label="Potential Energy")
         plt.plot(times, kinE - kinE[0], label="Kinetic Energy")
-        plt.scatter([times[index-1] for index in self.dft[1:]], [totE[index-1] - totE[0] for index in self.dft[1:]], marker='x', label="QMC Calculations", color='black')
+        plt.scatter([times[index-1] for index in self.dft[1:]],
+            [totE[index-1] - totE[0] for index in self.dft[1:]],
+            marker='x', label="QMC Calculations", color='black')
         plt.legend()
         plt.xlabel("Time (ps)")
         plt.ylabel("Energy (eV)")
-        if (filename != ""):
+        if filename != "":
             plt.savefig(filename)
 
     def plot_temperature(self, filename=""):
@@ -126,5 +126,5 @@ class Analyze():
         plt.plot(times, temp)
         plt.xlabel("Time (ps)")
         plt.ylabel("Temperature (K)")
-        if (filename != ""):
+        if filename != "":
             plt.savefig(filename)

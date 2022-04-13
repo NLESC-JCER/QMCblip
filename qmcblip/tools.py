@@ -1,16 +1,15 @@
+"""Module for usefull tools."""
+from os import remove
+from os.path import exists
+
 import numpy as np
-
-from flare import otf_parser
-
-from ase.db import connect
-from ase.io.trajectory import Trajectory
+import periodictable as pt
 from ase import Atoms
 from ase.calculators.calculator import Calculator
+from ase.db import connect
+from ase.io.trajectory import Trajectory
 
-import periodictable as pt
-
-from os.path import exists
-from os import remove
+from flare import otf_parser
 
 def traj_to_db(traj_file, db_file, append=False):
     """Convert ASE trajectory file to database.
@@ -33,12 +32,12 @@ def traj_to_db(traj_file, db_file, append=False):
         remove(db_file)
 
     # Open files
-    db = connect(db_file)
+    database = connect(db_file)
     traj = Trajectory(traj_file)
 
     # Write to database
     for atoms in traj:
-        db.write(atoms, relaxed=False)
+        database.write(atoms, relaxed=False)
 
 def otf_to_db(otf_file, db_file, append=False):
     """Convert FLARE OTF file to database.
@@ -61,17 +60,17 @@ def otf_to_db(otf_file, db_file, append=False):
         remove(db_file)
 
     # Open files
-    db = connect(db_file)
+    database = connect(db_file)
     otf = otf_parser.OtfAnalysis(otf_file, calculate_energy=True)
 
     types = otf.header['species']
     atomicnumbers = np.zeros(len(types))
     atomicmasses = np.zeros(len(types))
-    for i in range(len(types)):
+    for i, _ in enumerate(types):
         atomicnumbers[i] = getattr(pt, types[i]).number
         atomicmasses[i] = getattr(pt, types[i]).mass
 
-    for i in range(len(otf.dft_frames)):
+    for i, _ in enumerate(otf.dft_frames):
         # Get all the interesting data
         forces = otf.gp_force_list[i]
         positions = otf.gp_position_list[i]
@@ -85,5 +84,5 @@ def otf_to_db(otf_file, db_file, append=False):
         atoms.calc.results['energy'] = energy
         atoms.numbers = atomicnumbers
         atoms.masses = atomicmasses
-        
-        db.write(atoms)
+
+        database.write(atoms)

@@ -2,7 +2,9 @@
 
 QMC Based Learning of Interatomic Potentials
 
-[![PyPI version](https://badge.fury.io/py/QMCblip.svg)](https://badge.fury.io/py/QMCblip)
+[![PyPI version](https://badge.fury.io/py/QMCblip.svg)](https://badge.fury.io/py/QMCblip) 
+[![Build Status](https://github.com/NLESC-JCER/QMCblip/workflows/build/badge.svg)](https://github.com/NLESC-JCER/QMCblip/actions)
+[![Coverage Status](https://coveralls.io/repos/github/NLESC-JCER/QMCblip/badge.svg)](https://coveralls.io/github/NLESC-JCER/QMCblip)
 
 # Installation
 
