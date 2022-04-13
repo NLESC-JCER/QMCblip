@@ -150,7 +150,7 @@ class Settings(BaseModel):
         input_file.close()
 
     @classmethod
-    def read(cls: Type['Model'], filename: Union[str, Path]) -> 'Model':
+    def read(cls: Type['BaseModel'], filename: Union[str, Path]) -> 'BaseModel':
         """Read the CHAMP input file and convert it to a dictionary format
 
         Args:
