@@ -28,9 +28,8 @@ jobs:
       run: |
         coverage run -m pytest tests
         coverage report
-    - name: Coveralls Parallel
+    - name: Coveralls
       run: coveralls --service=github
       env:
         GITHUB_TOKEN: ${{ secrets.github_token }}
         COVERALLS_FLAG_NAME: python-${{ matrix.version }}
-        COVERALLS_PARALLEL: true
