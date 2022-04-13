@@ -157,6 +157,13 @@ class Settings(BaseModel):
         if not exists(filename):
             raise FileNotFoundError(filename + " was not found!")
 
+        path = PosixPath(filename).resolve().parent
+
+        if path.relative_to(path.cwd()).resolve() == path.cwd():
+            path =  ""
+        else:
+            path = path.as_posix() + "/"
+
         output = dict()
 
         f = open(filename, 'r')
@@ -184,7 +191,7 @@ class Settings(BaseModel):
                 key = temp[0]
                 temp.pop(0)
                 value = ' '.join(temp)
-                output[key] = value
+                output[key] = path + value
             # All other tags
             else:
                 temp = line[:-1].split()
@@ -193,7 +200,10 @@ class Settings(BaseModel):
                 value = ' '.join(temp)
                 if inmod:
                     # If we are in a module, add the tag to that subdictionary.
-                    output[curmod][key] = value
+                    if key != "pool":
+                        output[curmod][key] = value
+                    else:
+                        output[curmod][key] = path + value
                 else:
                     output[key] = value
 

@@ -66,9 +66,6 @@ class CHAMP(FileIOCalculator):
         else:
             self.parameters['settings'] = Settings.read(self.parameters['vmc_in'])
 
-        # We use a temporary input file
-        self.parameters['settings'].write('vmc_temp.inp')
-
         # Set the command to call CHAMP
         self._set_command()
     
