@@ -26,11 +26,21 @@ jobs:
         pylint $(git ls-files 'qmcblip/*.py')
     - name: Test with pytest
       run: |
-        coverage run -m pytest tests
+        coverage run -m --source=qmcblip pytest tests
         coverage report
-    - name: Coveralls Parallel
+    - name: Coveralls
       run: coveralls --service=github
       env:
         GITHUB_TOKEN: ${{ secrets.github_token }}
-        COVERALLS_FLAG_NAME: python-${{ matrix.version }}
+        COVERALLS_FLAG_NAME: python-${{ matrix.python-version }}
         COVERALLS_PARALLEL: true
+
+  finish:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Coveralls Finished
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.github_token }}
+          parallel-finished: true
