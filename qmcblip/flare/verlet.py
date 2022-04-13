@@ -24,9 +24,9 @@ class CustomVerlet(VelocityVerlet):
             #p += 0.5 * self.dt * forces
         else:
             p += 0.5 * self.dt * (forces + self.old_forces)
-        
+
         atoms.set_momenta(p)
-        
+
         masses = atoms.get_masses()[:, np.newaxis]
         r = atoms.get_positions()
 
