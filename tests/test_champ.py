@@ -1,4 +1,5 @@
 import os
+import shutil
 import unittest
 from os import remove
 from pathlib import Path
@@ -15,48 +16,49 @@ found_champ = pytest.mark.skipif(
 )
 class TestChamp(unittest.TestCase):
     def setUp(self):
-        self.champ_dir = str(Path.home().joinpath('software/champ'))
-        self.settings = Settings.read("tests/test_data/C2_champ/vmc.inp")
-        self.atoms = Atoms('C2', [(0,0,-0.61385), (0,0,0.61385)])
-        os.chdir('tests/test_data')
+        os.mkdir("tests/test_data/temp")
+        os.chdir('tests/test_data/temp')
 
     def test_setupError(self):
+        settings = Settings.read("../C2_champ/vmc.inp")
         with self.assertRaises(CalculatorSetupError):
             CHAMP(champ_loc="")
         with self.assertRaises(CalculatorSetupError):
-            t = CHAMP(champ_loc=".vmc.mov1")
+            t = CHAMP(champ_loc="../vmc.mov1")
         with self.assertRaises(CalculatorSetupError):
-            CHAMP(champ_loc="", vmc_in="C2_champ/vmc.inp")
+            CHAMP(champ_loc="", vmc_in="../C2_champ/vmc.inp")
         with self.assertRaises(CalculatorSetupError):
-            CHAMP(champ_loc="", settings=self.settings)
-            remove('vmc.inp')
+            CHAMP(champ_loc="", settings=settings)
 
     def test_writeInput(self):
-        calc = CHAMP(champ_loc="./vmc.mov1", settings=self.settings)
-        calc.write_input(atoms=self.atoms)
+        settings = Settings.read("../C2_champ/vmc.inp")
+        atoms = Atoms('C2', [(0,0,-0.61385), (0,0,0.61385)])
+        calc = CHAMP(champ_loc="../vmc.mov1", settings=settings)
+        calc.write_input(atoms=atoms)
         f = open('molecule.xyz')
-        self.assertEqual(int(f.readline()), len(self.atoms))
+        self.assertEqual(int(f.readline()), len(atoms))
         f.readline()
-        for i in range(len(self.atoms)):
+        for i in range(len(atoms)):
             a = np.array(f.readline().split()[1:], dtype=float) * units.Bohr/units.Ang
-            b = self.atoms[i].position
+            b = atoms[i].position
             for j in range(3):
                 self.assertAlmostEqual(a[j], b[j])
-        remove('vmc.inp')
-        remove('vmc_temp.inp')
-        remove('molecule.xyz')
         f.close()
 
     @found_champ
     def test_C2(self):
-        calc = CHAMP(champ_loc=self.champ_dir+"/bin/vmc.mov1", settings=self.settings)
-        self.atoms.calc = calc
+        shutil.copytree("../C2_champ/pool", "pool")
+        shutil.copyfile("../C2_champ/vmc.inp", "vmc.inp")
+        atoms = Atoms('C2', [(0,0,-0.61385), (0,0,0.61385)])
+        calc = CHAMP(champ_loc=str(Path.home().joinpath('software/champ'))+"/bin/vmc.mov1")
+        atoms.calc = calc
 
-        self.assertAlmostEqual(self.atoms.get_total_energy(), -292.4598135740918)
+        self.assertAlmostEqual(atoms.get_total_energy(), -292.4598135740918)
         cleanup('parser.log', 'output.log', 'vmc.out')
 
     def tearDown(self):
-        os.chdir("../..")
+        os.chdir("../../..")
+        shutil.rmtree('tests/test_data/temp')
 
 
 
