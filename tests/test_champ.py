@@ -11,10 +11,11 @@ from qmcblip.champ import CHAMP
 from qmcblip.champio import Settings, cleanup
 
 found_champ = pytest.mark.skipif(
-    not Path('~/software/champ').is_dir(), reason="CHAMP not found."
+    not Path.home().joinpath(Path('software/champ')).is_dir(), reason="CHAMP not found."
 )
 class TestChamp(unittest.TestCase):
     def setUp(self):
+        self.champ_dir = Path.home().joinpath('software/champ')
         self.settings = Settings.read("tests/test_data/C2_champ/vmc.inp")
         self.atoms = Atoms('C2', [(0,0,-0.61385), (0,0,0.61385)])
         os.chdir('tests/test_data')
@@ -49,7 +50,7 @@ class TestChamp(unittest.TestCase):
 
     @found_champ
     def test_C2(self):
-        calc = CHAMP(champ_loc="~/software/champ/bin/vmc.mov1", settings=self.settings)
+        calc = CHAMP(champ_loc=self.champ_dir, settings=self.settings)
         self.atoms.calc = calc
 
         self.assertAlmostEqual(self.atoms.get_total_energy(), -293.0584640666279)
