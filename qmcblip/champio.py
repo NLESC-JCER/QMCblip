@@ -171,7 +171,7 @@ class Settings(BaseModel, extra=Extra.allow):
             path = path.as_posix() + "/"
 
         if Path(path).is_relative_to(Path.cwd()):
-            path = str(Path(path).relative_to(Path.cwd()))
+            path = Path(path).relative_to(Path.cwd()).as_posix() + "/"
 
         output = {}
 
