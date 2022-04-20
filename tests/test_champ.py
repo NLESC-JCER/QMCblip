@@ -49,13 +49,11 @@ class TestChamp(unittest.TestCase):
 
     @found_champ
     def test_C2(self):
-        os.chdir('C2_champ')
         calc = CHAMP(champ_loc=self.champ_dir+"/bin/vmc.mov1", settings=self.settings)
         self.atoms.calc = calc
 
-        self.assertAlmostEqual(self.atoms.get_total_energy(), -293.0584640666279)
+        self.assertAlmostEqual(self.atoms.get_total_energy(), -292.4598135740918)
         cleanup()
-        os.chdir('..')
 
     def tearDown(self):
         os.chdir("../..")
