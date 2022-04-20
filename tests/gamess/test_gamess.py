@@ -19,6 +19,9 @@ found_games = pytest.mark.skipif(
 class TestGamess(unittest.TestCase):
 
     def setUp(self):
+        if Path.home().joinpath(Path('software/gamess')).is_dir():
+            shutil.rmtree(Path.home().joinpath(Path('software/gamess/restart')))
+            os.mkdir(Path.home().joinpath(Path('software/gamess/restart')))
         os.mkdir("tests/test_data/temp")
         os.chdir('tests/test_data/temp')
 
