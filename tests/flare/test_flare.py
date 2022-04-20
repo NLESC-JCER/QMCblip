@@ -8,7 +8,7 @@ from ase import Atoms, units
 from ase.atoms import Cell
 from qmcblip.champ import CHAMP
 from qmcblip.flare.quicksim import OTFSettings, quicksim
-from qmcblip.tools import Analyze
+from qmcblip.flare.tools import Analyze
 
 found_champ = pytest.mark.skipif(
     not Path.home().joinpath(Path('software/champ')).is_dir(), reason="CHAMP not found."
