@@ -50,7 +50,7 @@ class TestChamp(unittest.TestCase):
 
     @found_champ
     def test_C2(self):
-        calc = CHAMP(champ_loc=self.champ_dir, settings=self.settings)
+        calc = CHAMP(champ_loc=self.champ_dir+"/bin/vmc.mov1", settings=self.settings)
         self.atoms.calc = calc
 
         self.assertAlmostEqual(self.atoms.get_total_energy(), -293.0584640666279)
