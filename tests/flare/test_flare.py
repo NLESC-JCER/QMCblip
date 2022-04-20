@@ -10,12 +10,13 @@ from ase.atoms import Cell
 from qmcblip.champ import CHAMP
 from qmcblip.flare.quicksim import OTFSettings, quicksim
 from qmcblip.flare.utils import Analyze
+from qmcblip.tools import otf_to_db
 
 found_champ = pytest.mark.skipif(
     not Path.home().joinpath(Path('software/champ')).is_dir(), reason="CHAMP not found."
 )
 
-class TestChamp(unittest.TestCase):
+class TestFlare(unittest.TestCase):
 
     def setUp(self):
         os.mkdir("tests/test_data/temp")
@@ -42,6 +43,30 @@ class TestChamp(unittest.TestCase):
         res.to_xyz()
         res.get_data()
         self.assertAlmostEqual(res.results['total energy'][-1], -292.466862)
+
+    @found_champ
+    def test_quicksim_C2_changes(self):
+        shutil.copytree("../C2_champ/pool", "pool")
+        shutil.copyfile("../C2_champ/vmc.inp", "vmc.inp")
+
+        atoms = Atoms('C2', [(0,0,-0.61385), (0,0,0.61385)])
+        atoms.cell  = Cell.fromcellpar([50, 50, 50, 90, 90, 90])
+        atoms.pbc=[True, True, True]
+
+        settings = OTFSettings(theory=OTFSettings.FLARE())
+        settings.std_tolerance_factor = 0.5
+
+        calc = CHAMP(champ_loc=str(Path.home().joinpath('software/champ'))+"/bin/vmc.mov1")
+
+        changes = [(2, {'optwf': {'nopt_iter': 3}})]
+
+        quicksim(atoms, 0.5, 5, calc, settings, changes = changes)
+
+        res = Analyze('OTF.out')
+        res.to_xyz()
+        res.get_data()
+        otf_to_db('OTF.out', 'OTF.db')
+        self.assertAlmostEqual(res.results['total energy'][-1], -293.967875)
 
     @found_champ
     def test_quicksim_Thio(self):

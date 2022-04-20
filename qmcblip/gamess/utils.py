@@ -112,6 +112,8 @@ class WavefunctionCreator:
             if isinstance(item, dict):
                 for key2, item2 in item.items():
                     calc.parameters[key][key2] = item2
+            elif key == "userscr":
+                calc.userscr = item
             else:
                 calc.parameters[key] = item
 
@@ -155,6 +157,8 @@ class WavefunctionCreator:
             if isinstance(item, dict):
                 for key2, item2 in item.items():
                     calc.parameters[key][key2] = item2
+            elif key == "userscr":
+                calc.userscr = item
             else:
                 calc.parameters[key] = item
 
@@ -199,6 +203,8 @@ class WavefunctionCreator:
             if isinstance(item, dict):
                 for key2, item2 in item.items():
                     calc.parameters[key][key2] = item2
+            elif key == "userscr":
+                calc.userscr = item
             else:
                 calc.parameters[key] = item
 
