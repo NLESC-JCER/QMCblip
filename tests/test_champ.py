@@ -44,16 +44,13 @@ class TestChamp(unittest.TestCase):
         remove('vmc_temp.inp')
         remove('molecule.xyz')
         f.close()
-    
+
     @found_champ
     def test_C2(self):
         calc = CHAMP(champ_loc="~/software/champ/bin/vmc.mov1", settings=self.settings)
-        atoms = Atoms('C2', [(0,0,-0.61385), (0,0,0.61385)])
-        atoms.calc = calc
-        atoms.calc.parameters.settings.optwf.vmc_nstep = 2
-        atoms.calc.parameters.settings.optwf.vmc_nblk = 2
+        self.atoms.calc = calc
 
-        self.assertAlmostEqual(atoms.get_total_energy(), -293.0584640666279)
+        self.assertAlmostEqual(self.atoms.get_total_energy(), -293.0584640666279)
         cleanup()
 
 
