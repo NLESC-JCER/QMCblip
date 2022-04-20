@@ -73,20 +73,20 @@ class WavefunctionCreator:
 
     def _get_ecp(self):
         self.ecp = {}
-        ecp = {}
+        self.ecp_p = {}
 
         for atom in self.symbols:
             with open('gamess/' + atom, 'r', encoding="utf-8") as file:
-                ecp[atom] = '\n'.join(file.read().split('\n')[:-1])
+                self.ecp_p[atom] = '\n'.join(file.read().split('\n')[:-1])
 
         has_occured = {}
         for atom in self.symbols:
             has_occured[atom] = False
         for ind, atom in enumerate(self.atoms.get_chemical_symbols()):
             if has_occured[atom]:
-                self.ecp[ind] = ecp[atom].split(" ")[0]
+                self.ecp[ind] = self.ecp_p[atom].split(" ")[0]
             else:
-                self.ecp[ind] = ecp[atom]
+                self.ecp[ind] = self.ecp_p[atom]
                 has_occured[atom] = True
 
 
@@ -263,8 +263,8 @@ class WavefunctionCreator:
         nelec = 0
         for ind, atom in enumerate(self.atoms.get_chemical_symbols()):
             nelec += self.atoms.symbols.numbers[ind] -\
-                int(self.ecp[atom].split('\n')[0].split(" ")[2])
-        
+                int(self.ecp_p[atom].split('\n')[0].split(" ")[2])
+
         nup = math.ceil(nelec/2)
 
         settings = Settings(general=Settings.General(title=self.basename, basis="BFD-D",
@@ -273,5 +273,3 @@ class WavefunctionCreator:
         jastrow_der="pool/jastrow_der", electrons=Settings.Electrons(nup=nup, nelec=nelec))
 
         return settings
-
-
