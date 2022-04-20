@@ -32,6 +32,7 @@ class TestChamp(unittest.TestCase):
         atoms.pbc=[True, True, True]
 
         settings = OTFSettings(theory=OTFSettings.FLARE())
+        settings.std_tolerance_factor = 0.5
 
         calc = CHAMP(champ_loc=str(Path.home().joinpath('software/champ'))+"/bin/vmc.mov1")
 

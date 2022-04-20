@@ -1,7 +1,6 @@
 import os
 import shutil
 import unittest
-from os import remove
 from pathlib import Path
 
 import numpy as np
@@ -10,7 +9,7 @@ from ase import Atoms, units
 from ase.calculators.calculator import CalculatorSetupError
 from ase.md.verlet import VelocityVerlet
 from qmcblip.champ import CHAMP
-from qmcblip.champio import Settings, cleanup
+from qmcblip.champio import Settings
 
 found_champ = pytest.mark.skipif(
     not Path.home().joinpath(Path('software/champ')).is_dir(), reason="CHAMP not found."
