@@ -5,7 +5,7 @@ import flare_pp._C_flare as flare_pp
 from ase import units
 from flare_pp.sparse_gp import SGP_Wrapper
 from flare_pp.sparse_gp_calculator import SGP_Calculator
-from pydantic import BaseModel
+from pydantic import BaseModel, Extra
 
 from flare.ase.calculator import FLARE_Calculator
 from flare.gp import GaussianProcess
@@ -14,11 +14,11 @@ from flare.utils.parameter_helper import ParameterHelper
 from .otf import C_ASE_OTF as ASE_OTF
 
 
-class OTFSettings(BaseModel):
+class OTFSettings(BaseModel, extra=Extra.allow):
     """Dataclass containing FLARE(++) configuration.
     """
 
-    class Theory(BaseModel):
+    class Theory(BaseModel, extra=Extra.allow):
         """Abstract baseclass.
         """
 

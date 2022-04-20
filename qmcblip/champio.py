@@ -5,15 +5,15 @@ from os.path import exists
 from pathlib import Path, PosixPath
 from typing import Optional, Type, Union
 
-from pydantic import BaseModel, DirectoryPath, Field, FilePath
+from pydantic import BaseModel, DirectoryPath, Field, FilePath, Extra
 
 
-class Settings(BaseModel):
+class Settings(BaseModel, extra=Extra.allow):
     """Data class containing CHAMP configuration.
 
     This class can hold the neccessery configuration to run CHAMP.
     """
-    class General(BaseModel):
+    class General(BaseModel, extra=Extra.allow):
         """General module class.
         """
 
@@ -38,7 +38,7 @@ class Settings(BaseModel):
         eunit: str = "Hartrees"
         """:obj:`str`, optional: energy units."""
 
-    class Ase(BaseModel):
+    class Ase(BaseModel, extra=Extra.allow):
         """ASE module class.
         """
 
@@ -47,7 +47,7 @@ class Settings(BaseModel):
         node_cutoff: int = 1
         enode_cutoff: float = 0.05
 
-    class Electrons(BaseModel):
+    class Electrons(BaseModel, extra=Extra.allow):
         """Electrons module class.
         """
 
@@ -57,7 +57,7 @@ class Settings(BaseModel):
         nelec: int
         """:obj:`int`: total amount of electrons."""
 
-    class Optwf(BaseModel):
+    class Optwf(BaseModel, extra=Extra.allow):
         """Wavefunction optimization module class.
         """
 
@@ -71,7 +71,7 @@ class Settings(BaseModel):
         isample_cmat: int = 0
         energy_tol: float = 0.0
 
-    class BlockingVmc(BaseModel):
+    class BlockingVmc(BaseModel, extra=Extra.allow):
         """VMC module class.
         """
 
@@ -80,7 +80,7 @@ class Settings(BaseModel):
         vmc_nblkeq: int = 1
         vmc_nconf_new: int = 0
 
-    class Pseudo(BaseModel):
+    class Pseudo(BaseModel, extra=Extra.allow):
         """Pseudopotential module class.
         """
 
@@ -109,11 +109,11 @@ class Settings(BaseModel):
     symmetry: Optional[FilePath] = Field(prefix="load ")
     """optional: path to the symmetry file."""
 
-    ase: Optional[Ase]
+    ase: Ase = Ase()
     electrons: Electrons
-    optwf: Optional[Optwf]
-    pseudo: Optional[Pseudo]
-    blocking_vmc: Optional[BlockingVmc]
+    optwf: Optwf = Optwf()
+    pseudo: Pseudo = Pseudo()
+    blocking_vmc: BlockingVmc = BlockingVmc()
 
     def write(self, filename='vmc.inp'):
         """Write a this dataclass containing the CHAMP configuration to an input file.
