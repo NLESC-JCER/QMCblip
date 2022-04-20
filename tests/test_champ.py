@@ -15,9 +15,9 @@ found_champ = pytest.mark.skipif(
 )
 class TestChamp(unittest.TestCase):
     def setUp(self):
-        self.settings = Settings.read("test_data/C2_champ/vmc.inp")
+        self.settings = Settings.read("tests/test_data/C2_champ/vmc.inp")
         self.atoms = Atoms('C2', [(0,0,-0.61385), (0,0,0.61385)])
-        os.chdir('test_data')
+        os.chdir('tests/test_data')
 
     def test_setupError(self):
         with self.assertRaises(CalculatorSetupError):
@@ -31,7 +31,8 @@ class TestChamp(unittest.TestCase):
             remove('vmc.inp')
 
     def test_writeInput(self):
-        calc = CHAMP(champ_loc=".vmc.mov1", settings=self.settings)
+        print(Path.cwd())
+        calc = CHAMP(champ_loc="./vmc.mov1", settings=self.settings)
         calc.write_input(atoms=self.atoms)
         f = open('molecule.xyz')
         self.assertEqual(int(f.readline()), len(self.atoms))
@@ -41,6 +42,7 @@ class TestChamp(unittest.TestCase):
             b = self.atoms[i].position
             for j in range(3):
                 self.assertAlmostEqual(a[j], b[j])
+        remove('vmc.inp')
         remove('vmc_temp.inp')
         remove('molecule.xyz')
         f.close()
@@ -53,6 +55,8 @@ class TestChamp(unittest.TestCase):
         self.assertAlmostEqual(self.atoms.get_total_energy(), -293.0584640666279)
         cleanup()
 
+    def tearDown(self):
+        os.chdir("../..")
 
 
 
