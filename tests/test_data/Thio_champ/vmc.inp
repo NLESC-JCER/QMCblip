@@ -3,9 +3,7 @@
     pool         ./pool/
     basis        BFD-Da
     pseudopot    BFD
-    mode         'vmc_one_mpi1'
-    nloc        4
-    nquad       12
+    mode         vmc_one_mpi1
 %endmodule
 
 load molecule        molecule.xyz
@@ -33,15 +31,9 @@ load jastrow_der     pool/jastrow_der
     ioptci        1
     ioptjas       1
     ioptorb       1
-    method        'sr_n'
-    multiple_adiag 0
-    ncore         0
     nextorb       100
     no_active     1
     nopt_iter     1
-    sr_tau        0.05
-    sr_eps        0.001
-    sr_adiag      0.01
     isample_cmat  0
     energy_tol    0.0
 %endmodule
@@ -51,6 +43,11 @@ load jastrow_der     pool/jastrow_der
     vmc_nblk      400
     vmc_nblkeq    1
     vmc_nconf_new 0
+%endmodule
+
+%module pseudo
+    nloc        4
+    nquad       12
 %endmodule
 
 

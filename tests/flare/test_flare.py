@@ -65,8 +65,7 @@ class TestChamp(unittest.TestCase):
         res = Analyze('OTF.out')
         res.to_xyz()
         res.get_data()
-        print(res.results['total energy'][-1])
-        #self.assertAlmostEqual(res.results['total energy'][-1], -292.466862)
+        self.assertAlmostEqual(res.results['total energy'][-1], -956.934665)
 
 
 
