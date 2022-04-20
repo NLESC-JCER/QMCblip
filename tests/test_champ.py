@@ -89,8 +89,8 @@ class TestChamp(unittest.TestCase):
         atoms.calc = CHAMP(champ_loc=str(Path.home().joinpath('software/champ'))+"/bin/vmc.mov1", use_opt_wf=True)
         dyn = VelocityVerlet(atoms, units.fs)
         dyn.run(3)
-        res = [[ 6.57243666e-04 -1.50591101e-03 -5.79840171e-01]
-               [ 3.53073963e-04 -2.79268146e-03  5.80160063e-01]]
+        res = [[ 6.57243666e-04, -1.50591101e-03, -5.79840171e-01],
+               [ 3.53073963e-04, -2.79268146e-03, 5.80160063e-01]]
         print(atoms.get_positions(), atoms.get_total_energy())
         for i in range(2):
             for j in range(3):
