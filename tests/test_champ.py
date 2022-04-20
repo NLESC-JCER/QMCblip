@@ -11,13 +11,13 @@ from qmcblip.champ import CHAMP
 from qmcblip.champio import Settings, cleanup
 
 found_champ = pytest.mark.skipif(
-    not Path('~/software/champ').is_dir()
+    not Path('~/software/champ').is_dir(), reason="CHAMP not found."
 )
 class TestChamp(unittest.TestCase):
     def setUp(self):
-        self.settings = Settings.read("tests/test_data/C2_champ/vmc.inp")
+        self.settings = Settings.read("test_data/C2_champ/vmc.inp")
         self.atoms = Atoms('C2', [(0,0,-0.61385), (0,0,0.61385)])
-        os.chdir('tests/test_data')
+        os.chdir('test_data')
 
     def test_setupError(self):
         with self.assertRaises(CalculatorSetupError):
