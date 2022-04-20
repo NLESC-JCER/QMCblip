@@ -1,0 +1,53 @@
+%module general
+    title        Thio
+    pool         ./pool/
+    basis        BFD-Da
+    pseudopot    BFD
+    mode         vmc_one_mpi1
+%endmodule
+
+load molecule        molecule.xyz
+load basis_num_info  pool/BFD-Da.bfinfo
+
+load determinants    pool/det_opt_Monika
+load orbitals        pool/orbitals_opt_Monika
+load jastrow         pool/jastrow_opt_Monika
+load jastrow_der     pool/jastrow_der
+
+%module ase
+    iase          1
+    iforce_analy  0
+    node_cutoff   1 
+    enode_cutoff  0.05
+%endmodule
+
+%module electrons
+    nup           13
+    nelec         26
+%endmodule
+
+%module optwf
+    ioptwf        1
+    ioptci        1
+    ioptjas       1
+    ioptorb       1
+    nextorb       100
+    no_active     1
+    nopt_iter     1
+    isample_cmat  0
+    energy_tol    0.0
+%endmodule
+
+%module blocking_vmc
+    vmc_nstep     20
+    vmc_nblk      400
+    vmc_nblkeq    1
+    vmc_nconf_new 0
+%endmodule
+
+%module pseudo
+    nloc        4
+    nquad       12
+%endmodule
+
+

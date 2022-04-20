@@ -5,3 +5,4 @@ numpy==1.20.3
 matplotlib==3.1.2
 pydantic==1.9.0
 periodictable==1.6.0
+sgdml==0.4.10
