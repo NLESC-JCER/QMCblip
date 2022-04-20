@@ -57,6 +57,16 @@ class TestChamp(unittest.TestCase):
         self.assertAlmostEqual(atoms.get_total_energy(), -292.4598135740918)
 
     @found_champ
+    def test_C2_2n(self):
+        shutil.copytree("../C2_champ/pool", "pool")
+        shutil.copyfile("../C2_champ/vmc.inp", "vmc.inp")
+        atoms = Atoms('C2', [(0,0,-0.61385), (0,0,0.61385)])
+        calc = CHAMP(champ_loc=str(Path.home().joinpath('software/champ'))+"/bin/vmc.mov1", ncore=2)
+        atoms.calc = calc
+        print(atoms.get_total_energy())
+        self.assertAlmostEqual(atoms.get_total_energy(), -292.4598135740918)
+
+    @found_champ
     def test_C2_MD(self):
         shutil.copytree("../C2_champ/pool", "pool")
         shutil.copyfile("../C2_champ/vmc.inp", "vmc.inp")
@@ -64,7 +74,24 @@ class TestChamp(unittest.TestCase):
         atoms.calc = CHAMP(champ_loc=str(Path.home().joinpath('software/champ'))+"/bin/vmc.mov1")
         dyn = VelocityVerlet(atoms, units.fs)
         dyn.run(3)
-        res = [[0.004348154138868875, 0.0021912427163622832, -0.5825713579980879], [-0.0025218801616919595, 0.001956434734404338, 0.5759901971368933]]
+        res = [[0.004348154138868875, 0.0021912427163622832, -0.5825713579980879], 
+               [-0.0025218801616919595, 0.001956434734404338, 0.5759901971368933]]
+        for i in range(2):
+            for j in range(3):
+                self.assertAlmostEqual(atoms.get_positions()[i][j], res[i][j])
+        self.assertAlmostEqual(atoms.get_total_energy(),  -293.142893130546)
+
+   @found_champ
+    def test_C2_MD_opt_wf(self):
+        shutil.copytree("../C2_champ/pool", "pool")
+        shutil.copyfile("../C2_champ/vmc.inp", "vmc.inp")
+        atoms = Atoms('C2', [(0,0,-0.61385), (0,0,0.61385)])
+        atoms.calc = CHAMP(champ_loc=str(Path.home().joinpath('software/champ'))+"/bin/vmc.mov1", use_opt_wf=True)
+        dyn = VelocityVerlet(atoms, units.fs)
+        dyn.run(3)
+        res = [[0.004348154138868875, 0.0021912427163622832, -0.5825713579980879], 
+               [-0.0025218801616919595, 0.001956434734404338, 0.5759901971368933]]
+        print(atoms.get_positions(), atoms.get_total_energy())
         for i in range(2):
             for j in range(3):
                 self.assertAlmostEqual(atoms.get_positions()[i][j], res[i][j])
