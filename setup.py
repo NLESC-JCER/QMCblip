@@ -3,12 +3,12 @@ import setuptools
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
-with open("requirements.txt", "r") as fh:
+with open("requirements.txt", "r", encoding="utf-8") as fh:
     dependencies = fh.readlines()
 
 setuptools.setup(
     name="QMCblip",
-    version="1.0.2",
+    version="1.0.3",
     author="Emiel Slootman",
     author_email="e.slootman@esciencecenter.nl",
     description="A small package to couple Quantum Monte Carlo codes to Machine Learning Force Fields through ASE.",
