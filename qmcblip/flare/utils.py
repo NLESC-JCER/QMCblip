@@ -72,7 +72,7 @@ class Analyze():
         self.results['total energy'] = kinE[2:] + potE[1:-1]
         self.results['temperature'] = temp[2:]
 
-        if max(self.dft) > max(self.nondft):
+        if max(self.dft) > max(self.nondft + [0]):
             self.dft = self.dft[:-1]
         else:
             self.nondft = self.nondft[:-1]

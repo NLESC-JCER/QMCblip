@@ -384,7 +384,7 @@ class C_ASE_OTF(ASE_OTF, C_OTF):
             forces (List[float]): array containing the forces as calculated by CHAMP (or FLARE).
         """
 
-        if self.curr_step in self.update_settings and self.dtf_loc.name == "CHAMP":
+        if self.curr_step in self.update_settings and self.dft_loc.name == "CHAMP":
             sets = self.dft_loc.parameters.settings
             ind = np.where(self.update_settings == self.curr_step)[0][0]
             changes = self.update_settings[ind][1]
