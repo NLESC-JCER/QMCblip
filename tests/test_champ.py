@@ -1,12 +1,17 @@
 import unittest
-from qmcblip.champ import CHAMP
-from qmcblip.champio import Settings
-from ase.calculators.calculator import CalculatorSetupError
 from os import remove
-from ase import Atoms, units
+from pathlib import Path
+
 import numpy as np
+import pytest
+from ase import Atoms, units
+from ase.calculators.calculator import CalculatorSetupError
+from qmcblip.champ import CHAMP
+from qmcblip.champio import Settings, cleanup
 
-
+found_champ = pytest.mark.skipif(
+    not Path('~/software/champ').is_dir()
+)
 class TestChamp(unittest.TestCase):
     def setUp(self):
         self.settings = Settings.read("examples/C2-quicksim/vmc.inp")
@@ -39,6 +44,20 @@ class TestChamp(unittest.TestCase):
             remove('vmc_temp.inp')
             remove('molecule.xyz')
             f.close()
+    
+    @found_champ
+    def test_C2(self):
+        calc = CHAMP(champ_loc="~/software/champ/bin/vmc.mov1", settings=self.settings)
+        atoms = Atoms('C2', [(0,0,-0.61385), (0,0,0.61385)])
+        atoms.calc = calc
+        atoms.calc.parameters.settings.optwf.vmc_nstep = 2
+        atoms.calc.parameters.settings.optwf.vmc_nblk = 2
+
+        self.assertAlmostEqual(atoms.get_total_energy(), -300)
+        cleanup()
+
+
+
 
 if __name__ == '__main__':
     unittest.main()

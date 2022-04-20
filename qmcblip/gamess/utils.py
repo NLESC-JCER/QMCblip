@@ -31,7 +31,7 @@ class WavefunctionCreator:
 
     def __init__(self, atoms, champ_loc):
         self.atoms = atoms
-        self.champ_path = Path(champ_loc)
+        self.champ_path = Path(champ_loc).resolve()
         if not self.champ_path.is_dir():
             raise ValueError("Not a valid CHAMP path!")
 
