@@ -32,7 +32,31 @@ class TestChamp(unittest.TestCase):
         atoms.pbc=[True, True, True]
 
         settings = OTFSettings(theory=OTFSettings.FLARE())
-        settings.std_tolerance_factor = 0.5
+        settings.std_tolerance_factor = 3
+
+        calc = CHAMP(champ_loc=str(Path.home().joinpath('software/champ'))+"/bin/vmc.mov1")
+
+        quicksim(atoms, 0.5, 5, calc, settings)
+
+        res = Analyze('OTF.out')
+        res.to_xyz()
+        res.get_data()
+        self.assertAlmostEqual(res.results['total energy'][-1], -292.466862)
+
+    @found_champ
+    def test_quicksim_Thio(self):
+        shutil.copytree("../Thio_champ/pool", "pool")
+        shutil.copyfile("../Thio_champ/vmc.inp", "vmc.inp")
+
+        atoms = Atoms('C4SH4', [(0,0.71495093597,1.31902341514), (0,-0.71495093597,1.31902341514),
+            (0,-1.24055334534,0.05119099544), (0,1.24055334534,0.05119099544),
+            (0.6456,0,-1.15285178278), (0,1.32194923477,2.21441153704), (0,-1.32194923477,2.21441153704),
+            (0,2.27909548764,-0.24288695123), (0,-2.27909548764,-0.24288695123)])
+        atoms.cell  = Cell.fromcellpar([50, 50, 50, 90, 90, 90])
+        atoms.pbc=[True, True, True]
+
+        settings = OTFSettings(theory=OTFSettings.FLAREPP())
+        settings.std_tolerance_factor = 3
 
         calc = CHAMP(champ_loc=str(Path.home().joinpath('software/champ'))+"/bin/vmc.mov1")
 
@@ -42,6 +66,7 @@ class TestChamp(unittest.TestCase):
         res.to_xyz()
         res.get_data()
         print(res.results['total energy'][-1])
+        #self.assertAlmostEqual(res.results['total energy'][-1], -292.466862)
 
 
 
