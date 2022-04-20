@@ -8,6 +8,7 @@ import numpy as np
 import pytest
 from ase import Atoms, units
 from ase.calculators.calculator import CalculatorSetupError
+from ase.md.verlet import VelocityVerlet
 from qmcblip.champ import CHAMP
 from qmcblip.champio import Settings, cleanup
 
@@ -54,12 +55,21 @@ class TestChamp(unittest.TestCase):
         atoms.calc = calc
 
         self.assertAlmostEqual(atoms.get_total_energy(), -292.4598135740918)
-        cleanup('parser.log', 'output.log', 'vmc.out')
+
+    @found_champ
+    def test_C2_MD(self):
+        shutil.copytree("../C2_champ/pool", "pool")
+        shutil.copyfile("../C2_champ/vmc.inp", "vmc.inp")
+        atoms = Atoms('C2', [(0,0,-0.61385), (0,0,0.61385)])
+        atoms.calc = CHAMP(champ_loc=str(Path.home().joinpath('software/champ'))+"/bin/vmc.mov1")
+        dyn = VelocityVerlet(atoms, units.fs)
+        dyn.run(3)
+        self.assertListEqual(atoms.get_positions().tolist, [[0,0,-0.61],[0,0,0.61]])
+        self.assertAlmostEqual(atoms.get_total_energy(), -292.4598135740918)
 
     def tearDown(self):
         os.chdir("../../..")
         shutil.rmtree('tests/test_data/temp')
-
 
 
 if __name__ == '__main__':
