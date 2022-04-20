@@ -165,10 +165,13 @@ class Settings(BaseModel, extra=Extra.allow):
 
         path = PosixPath(filename).resolve().parent
 
-        if path.relative_to(path.cwd()).resolve() == path.cwd():
+        if path.relative_to(Path.cwd()).resolve() == path.cwd():
             path =  ""
         else:
             path = path.as_posix() + "/"
+
+        if Path(path).is_relative_to(Path.cwd()):
+            path = str(Path(path).relative_to(Path.cwd()))
 
         output = {}
 

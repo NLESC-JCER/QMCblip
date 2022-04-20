@@ -53,7 +53,7 @@ class TestChamp(unittest.TestCase):
         self.atoms.calc = calc
 
         self.assertAlmostEqual(self.atoms.get_total_energy(), -292.4598135740918)
-        cleanup()
+        cleanup('parser.log', 'output.log', 'vmc.out')
 
     def tearDown(self):
         os.chdir("../..")
