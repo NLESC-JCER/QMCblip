@@ -64,7 +64,7 @@ class TestChamp(unittest.TestCase):
         calc = CHAMP(champ_loc=str(Path.home().joinpath('software/champ'))+"/bin/vmc.mov1", ncore=2)
         atoms.calc = calc
         print(atoms.get_total_energy())
-        self.assertAlmostEqual(atoms.get_total_energy(), -292.4598135740918)
+        self.assertAlmostEqual(atoms.get_total_energy(), -292.5087940689357)
 
     @found_champ
     def test_C2_MD(self):
@@ -81,7 +81,7 @@ class TestChamp(unittest.TestCase):
                 self.assertAlmostEqual(atoms.get_positions()[i][j], res[i][j])
         self.assertAlmostEqual(atoms.get_total_energy(),  -293.142893130546)
 
-   @found_champ
+    @found_champ
     def test_C2_MD_opt_wf(self):
         shutil.copytree("../C2_champ/pool", "pool")
         shutil.copyfile("../C2_champ/vmc.inp", "vmc.inp")
@@ -89,13 +89,13 @@ class TestChamp(unittest.TestCase):
         atoms.calc = CHAMP(champ_loc=str(Path.home().joinpath('software/champ'))+"/bin/vmc.mov1", use_opt_wf=True)
         dyn = VelocityVerlet(atoms, units.fs)
         dyn.run(3)
-        res = [[0.004348154138868875, 0.0021912427163622832, -0.5825713579980879], 
-               [-0.0025218801616919595, 0.001956434734404338, 0.5759901971368933]]
+        res = [[ 6.57243666e-04 -1.50591101e-03 -5.79840171e-01]
+               [ 3.53073963e-04 -2.79268146e-03  5.80160063e-01]]
         print(atoms.get_positions(), atoms.get_total_energy())
         for i in range(2):
             for j in range(3):
                 self.assertAlmostEqual(atoms.get_positions()[i][j], res[i][j])
-        self.assertAlmostEqual(atoms.get_total_energy(),  -293.142893130546)
+        self.assertAlmostEqual(atoms.get_total_energy(),  -295.01571168245135)
 
     def tearDown(self):
         os.chdir("../../..")
