@@ -15,7 +15,7 @@ found_champ = pytest.mark.skipif(
 )
 class TestChamp(unittest.TestCase):
     def setUp(self):
-        self.champ_dir = Path.home().joinpath('software/champ')
+        self.champ_dir = str(Path.home().joinpath('software/champ'))
         self.settings = Settings.read("tests/test_data/C2_champ/vmc.inp")
         self.atoms = Atoms('C2', [(0,0,-0.61385), (0,0,0.61385)])
         os.chdir('tests/test_data')
