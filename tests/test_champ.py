@@ -64,8 +64,11 @@ class TestChamp(unittest.TestCase):
         atoms.calc = CHAMP(champ_loc=str(Path.home().joinpath('software/champ'))+"/bin/vmc.mov1")
         dyn = VelocityVerlet(atoms, units.fs)
         dyn.run(3)
-        self.assertListEqual(atoms.get_positions().tolist, [[0,0,-0.61],[0,0,0.61]])
-        self.assertAlmostEqual(atoms.get_total_energy(), -292.4598135740918)
+        res = [[0.004348154138868875, 0.0021912427163622832, -0.5825713579980879], [-0.0025218801616919595, 0.001956434734404338, 0.5759901971368933]]
+        for i in range(2):
+            for j in range(3):
+                self.assertAlmostEqual(atoms.get_positions()[i][j], res[i][j])
+        self.assertAlmostEqual(atoms.get_total_energy(),  -293.142893130546)
 
     def tearDown(self):
         os.chdir("../../..")
