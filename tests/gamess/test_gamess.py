@@ -38,8 +38,9 @@ class TestGamess(unittest.TestCase):
         input.optwf.nopt_iter = 10
         input.write('vmc.inp')
         atoms.calc = CHAMP(champ_loc=str(Path.home().joinpath('software/champ'))+"/bin/vmc.mov1", settings = input)
-
-        self.assertAlmostEqual(atoms.get_total_energy(), -297.5, places=0)
+        energy = atoms.get_total_energy()
+        print(energy)
+        self.assertEqual(int(energy+297.5), 0)
 
     def tearDown(self):
         os.chdir("../../..")
