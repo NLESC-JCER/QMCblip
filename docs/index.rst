@@ -8,16 +8,14 @@ Quantum Monte Carlo Based Learning of Interatomic Potentials
    installation
    qmcblip/champ
    qmcblip/flare
-   qmcblip/analyze
+   qmcblip/quicksim
+   qmcblip/gamess
 
 .. toctree::
    :maxdepth: 1
    :caption: Examples
 
-   examples/C2-quicksim
-   examples/thio-quicksim
-   examples/thio-300K
-   examples/thio-300K-ex
+   examples/examples
 
 .. toctree::
    :maxdepth: 1

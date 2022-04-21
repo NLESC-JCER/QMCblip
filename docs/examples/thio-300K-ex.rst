@@ -1,13 +1,13 @@
 Thiophene 300K Excited State Geometry
-=====================================
+-------------------------------------
 
 Running the simulation
-----------------------
+^^^^^^^^^^^^^^^^^^^^^^
 
 .. literalinclude:: ../../examples/thio-300K-ex/run.py
 
 Analyzing the simulation
-------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. literalinclude:: ../../examples/thio-300K-ex/plot.py
 

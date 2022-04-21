@@ -1,13 +1,13 @@
 Thiophene 300K
-==============
+--------------
 
 Running the simulation
-----------------------
+^^^^^^^^^^^^^^^^^^^^^^
 
 .. literalinclude:: ../../examples/thio-300K/run.py
 
 Analyzing the simulation
-------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. literalinclude:: ../../examples/thio-300K/plot.py
 
