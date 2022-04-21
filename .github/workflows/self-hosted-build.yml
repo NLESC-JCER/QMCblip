@@ -17,7 +17,7 @@ jobs:
         pip${{ matrix.python-version }} install -r requirements.txt
     - name: Linting with pylint
       run: |
-        pylint $(git ls-files 'qmcblip/*.py')
+        python${{ matrix.python-version }} -m pylint $(git ls-files 'qmcblip/*.py')
     - name: Test with pytest
       run: |
         python${{ matrix.python-version }} -m coverage run -m --source=qmcblip pytest tests

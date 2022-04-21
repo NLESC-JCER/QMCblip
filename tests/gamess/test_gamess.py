@@ -30,8 +30,10 @@ class TestGamess(unittest.TestCase):
     def test_userscrError(self):
         atoms = Atoms('C2', [(0,0,-0.61385), (0,0,0.61385)])
         wf = WavefunctionCreator(atoms, str(Path.home().joinpath('software/champ')))
-        self.assertRaises(wf.setup_rhf(userscr=None), RuntimeError)
-        self.assertRaises(wf.setup_rhf(userscr="not_exist"), RuntimeError)
+        with self.assertRaises(RuntimeError):
+            wf.setup_rhf(userscr=None)
+        with self.assertRaises(RuntimeError):
+            wf.setup_rhf(userscr="not_exist")
 
 
     @found_champ
