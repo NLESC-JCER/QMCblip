@@ -127,10 +127,13 @@ class Settings(BaseModel, extra=Extra.allow):
         schema = self.schema()['properties']
         for _, item in enumerate(self):
             if isinstance(item[1], BaseModel):
-                schema2 = item[1].schema()['properties']
+                if callable(getattr(item[1], 'schema')):
+                    schema2 = item[1].schema()['properties']
+                else:
+                    schema2 = []
                 input_file.write("\n%module " + item[0] + "\n")
                 for _, item2 in enumerate(item[1]):
-                    if 'postfix' in schema2[item2[0]]:
+                    if item2[0] in schema2 and 'postfix' in schema2[item2[0]]:
                         if item2[1] is not None:
                             input_file.write("\t" + item2[0] + " " + str(item2[1]) +\
                                  schema2[item2[0]]['postfix'] + "\n")
@@ -139,7 +142,7 @@ class Settings(BaseModel, extra=Extra.allow):
                             input_file.write("\t" + item2[0] + " " + str(item2[1]) + "\n")
                 input_file.write("%endmodule\n\n")
             else:
-                if 'prefix' in schema[item[0]]:
+                if item[0] in schema and 'prefix' in schema[item[0]]:
                     if item[1] is not None:
                         input_file.write(schema[item[0]]['prefix'] + item[0] + " " +\
                              str(item[1]) + '\n')
