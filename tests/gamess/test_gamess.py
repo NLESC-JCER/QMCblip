@@ -32,8 +32,10 @@ class TestGamess(unittest.TestCase):
         wf = WavefunctionCreator(atoms, str(Path.home().joinpath('software/champ')))
         with self.assertRaises(RuntimeError):
             wf.setup_rhf(userscr=None)
-        with self.assertRaises(RuntimeError):
+        os.chdir('..')
+        with self.assertRaises(FileNotFoundError):
             wf.setup_rhf(userscr="not_exist")
+        os.chdir('..')
 
 
     @found_champ
