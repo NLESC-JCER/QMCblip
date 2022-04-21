@@ -119,8 +119,12 @@ class WavefunctionCreator:
 
         calc.calculate(self.atoms)
 
-        if calc.userscr is not None:
-            copyfile(Path(calc.userscr).joinpath(name + '.dat'), name + '.dat')
+        if calc.userscr is None:
+            raise RuntimeError("USERSCR is not defined")
+        if not Path(calc.userscr).is_dir():
+            raise RuntimeError("USERSCR is not found at: " + calc.userscr)
+
+        copyfile(Path(calc.userscr).joinpath(name + '.dat'), name + '.dat')
 
         self.vec = '\n'.join(str(subprocess.check_output(
             str(self.champ_path.joinpath('tools/interface/getvec.pl')) +\
@@ -164,8 +168,12 @@ class WavefunctionCreator:
 
         calc.calculate(self.atoms)
 
-        if calc.userscr is not None:
-            copyfile(Path(calc.userscr).joinpath(name + '.dat'), name + '.dat')
+        if calc.userscr is None:
+            raise RuntimeError("USERSCR is not defined")
+        if not Path(calc.userscr).is_dir():
+            raise RuntimeError("USERSCR is not found at: " + calc.userscr)
+
+        copyfile(Path(calc.userscr).joinpath(name + '.dat'), name + '.dat')
 
         self.vec = '\n'.join(str(subprocess.check_output(
             str(self.champ_path.joinpath('tools/interface/getvec.pl')) +\
@@ -210,8 +218,12 @@ class WavefunctionCreator:
 
         calc.calculate(self.atoms)
 
-        if calc.userscr is not None:
-            copyfile(Path(calc.userscr).joinpath(name + '.dat'), name + '.dat')
+        if calc.userscr is None:
+            raise RuntimeError("USERSCR is not defined")
+        if not Path(calc.userscr).is_dir():
+            raise RuntimeError("USERSCR is not found at: " + calc.userscr)
+
+        copyfile(Path(calc.userscr).joinpath(name + '.dat'), name + '.dat')
 
         os.chdir('..')
 
