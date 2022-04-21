@@ -8,22 +8,22 @@ jobs:
     runs-on: [self-hosted]
     strategy:
       matrix:
-        python-version: ["3.9"]
+        python-version: ["3.7", "3.8", "3.9"]
     steps:
     - uses: actions/checkout@v3
     - name: Install dependencies
       run: |
-        pip install pylint pytest coverage coveralls
-        pip install -r requirements.txt
+        pip${{ matrix.python-version }} install pylint pytest coverage coveralls
+        pip${{ matrix.python-version }} install -r requirements.txt
     - name: Linting with pylint
       run: |
-        pylint $(git ls-files 'qmcblip/*.py')
+        python${{ matrix.python-version }} -m pylint $(git ls-files 'qmcblip/*.py')
     - name: Test with pytest
       run: |
-        coverage run -m --source=qmcblip pytest tests
-        coverage report
+        python${{ matrix.python-version }} -m coverage run -m --source=qmcblip pytest tests
+        python${{ matrix.python-version }} -m coverage report
     - name: Coveralls
-      run: coveralls --service=github
+      run: python${{ matrix.python-version }} -m coveralls --service=github
       env:
         GITHUB_TOKEN: ${{ secrets.github_token }}
         COVERALLS_FLAG_NAME: python-${{ matrix.python-version }}

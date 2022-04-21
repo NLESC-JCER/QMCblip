@@ -29,5 +29,5 @@ setuptools.setup(
     test_suite='tests',
     packages=setuptools.find_packages(),
     install_requires=dependencies,
-    python_requires=">=3.9, <3.10",
+    python_requires=">=3.7, <3.10",
 )
