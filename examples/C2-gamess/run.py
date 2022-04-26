@@ -1,7 +1,7 @@
 from qmcblip.gamess.utils import Presets
 from qmcblip.champ import CHAMP
 
-atoms = Presets.C2.atoms
+atoms = Presets.C2().atoms
 
 input = Presets.C2().build('../../champ')
 

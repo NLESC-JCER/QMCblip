@@ -6,7 +6,6 @@ import os
 import subprocess
 from pathlib import Path
 from shutil import copyfile
-from wave import Wave_read
 
 import ase.io.gamess_us
 from ase import Atoms
@@ -146,7 +145,7 @@ class WavefunctionCreator:
 
         self.vec = '\n'.join(str(subprocess.check_output(
             str(self.champ_path.joinpath('tools/interface/getvec.pl')) +\
-                 ' -t VEC ' + name, 
+                 ' -t VEC ' + name,
                  shell=True)).split('\\n')[1:-2]).split(" $END   \n $VEC   \n")[-1]
 
         os.chdir('..')

@@ -27,7 +27,7 @@ class TestGamess(unittest.TestCase):
     @found_champ
     @found_gamess
     def test_gamess(self):
-        atoms = Presets.C2.atoms
+        atoms = Presets.C2().atoms
         input = Presets.C2(userscr=str(Path.home().joinpath(Path('software/gamess/restart')))).build(str(Path.home().joinpath('software/champ')))
         input = wf.create_champ_input()
         input.optwf.nopt_iter = 10

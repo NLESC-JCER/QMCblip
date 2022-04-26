@@ -1,5 +1,5 @@
 """GAMESS"""
 
-from .utils import WavefunctionCreator
+from .utils import WavefunctionCreator, Presets
 
-__all__ = ['WavefunctionCreator']
+__all__ = ['WavefunctionCreator', 'Presets']
