@@ -29,7 +29,6 @@ class TestGamess(unittest.TestCase):
     def test_gamess(self):
         atoms = Presets.C2().atoms
         input = Presets.C2(userscr=str(Path.home().joinpath(Path('software/gamess/restart')))).build(str(Path.home().joinpath('software/champ')))
-        input = wf.create_champ_input()
         input.optwf.nopt_iter = 10
         input.write('vmc.inp')
         atoms.calc = CHAMP(champ_loc=str(Path.home().joinpath('software/champ'))+"/bin/vmc.mov1", settings = input)
