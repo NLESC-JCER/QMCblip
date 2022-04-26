@@ -1,7 +1,8 @@
 Creating Wavefunction
 ---------------------
 
-Important warning: this part is currently still experimental and only confirmed to work for C2.
+.. warning::
+    This part is currently still experimental and only confirmed to work for C2.
 
 QMCblip also includes some tools to make the wavefunction for CHAMP using GAMESS. To use it, first import:
 
