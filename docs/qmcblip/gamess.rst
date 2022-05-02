@@ -1,7 +1,8 @@
 Creating Wavefunction
 ---------------------
 
-Important warning: this part is currently still experimental and only confirmed to work for C2.
+.. warning::
+    This part is currently still experimental and only confirmed to work for C2.
 
 QMCblip also includes some tools to make the wavefunction for CHAMP using GAMESS. To use it, first import:
 
@@ -18,13 +19,11 @@ We can now initialize our :obj:`WavefunctionCreator <qmcblip.gamess.utils.Wavefu
 
 We can now run the GAMESS simulations. See the `GAMESS documentation`_ for more information. Using keywords and dictionaries you can supply additional GAMESS settings or change the defaults. Using the userscr keyword you can supply the location of the USERSCR directory. Usually the ASE GAMESS calculator can find it on its own, but if not you need to supply it.
 
->>> wf.setup_rhf()
->>> wf.setup_cas(system=dict(mwords=500), drt=dict(nmcc=2, ndoc=2, nval=2))
->>> wf.setup_ci(system=dict(mwords=500), cidrt=dict(nfzc=2, ndoc=2, nval=2))
+>>> wf.run_gamess(label='rhf', ...)
 
 After GAMESS is done we can convert the GAMESS output to CHAMP wavefunction.
 
->>> wf.convert_to_champ()
+>>> wf.convert_to_champ('rhf')
 
 And we can also quickly make a CHAMP input file (``vmc.inp``).
 
@@ -34,6 +33,14 @@ Here ``input`` is of the :obj:`Settings <qmcblip.champio.Settings>` type. With t
 
 >>> from qmcblip.champ import CHAMP
 >>> atoms.calc = CHAMP(champ_loc='../../champ/bin/vmc.mov1', settings = input)
+
+QMCblip also contains some preconfigured GAMESS simulations. Currently QMCblip only has a preset for C2. To make a wavefunction for C2:
+
+>>> from qmcblip.gamess.utils import Presets
+>>>
+>>> input = Presets.C2().build('../../champ')
+
+It is that easy!
 
 For more examples, see :doc:`../examples/examples`.
 
