@@ -7,6 +7,7 @@ QMC Based Learning of Interatomic Potentials
 [![Documentation Status](https://readthedocs.org/projects/qmcblip/badge/?version=latest)](https://qmcblip.readthedocs.io/en/latest/?badge=latest)
 [![GitHub](https://img.shields.io/github/license/NLESC-JCER/QMCblip)](https://github.com/NLESC-JCER/QMCblip/blob/master/LICENSE)
 [![Coverage Status](https://coveralls.io/repos/github/NLESC-JCER/QMCblip/badge.svg?branch=master)](https://coveralls.io/github/NLESC-JCER/QMCblip?branch=master)
+[![DOI](https://zenodo.org/badge/465304471.svg)](https://zenodo.org/badge/latestdoi/465304471)
 
 # Installation
 
