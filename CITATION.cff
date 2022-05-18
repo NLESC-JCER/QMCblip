@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+title: QMCblip
+message: 'If you use this software, please cite it as below.'
+type: software
+authors:
+  - given-names: Emiel
+    family-names: Slootman
+    orcid: 'https://orcid.org/0000-0003-3228-4055'
+repository-code: 'https://github.com/NLESC-JCER/QMCblip'
+abstract: >-
+  Quantum Monte Carlo Based Learning of Interatomic
+  Potentials
+keywords:
+  - Quantum Monte Carlo
+  - Molecular Dynamics
+  - Machine Learning
+license: Apache-2.0
+version: v1.0.6
